@@ -26,6 +26,12 @@ dist-ssr
 # Test coverage
 coverage/
 
+# Local issue tracker and specifications
+.scratch/
+
+# Local deepwork progress state
+.slim/deepwork/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
