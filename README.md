@@ -179,6 +179,7 @@ This limitation is a property of Windows, not a bug in Parla. It will be removed
 ## Documentation
 
 - [BUILDING.md](BUILDING.md) - Detailed build instructions
+- [Application Proxy](docs/application-proxy.md) - Configure direct, explicit, and Windows System proxy routing
 - [CONTRIBUTING.md](CONTRIBUTING.md) - How to contribute
 - [CHANGELOG.md](CHANGELOG.md) - Release notes
 
