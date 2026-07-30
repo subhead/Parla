@@ -1,15 +1,17 @@
-// Commandes Tauri pour la transcription Whisper locale.
+// Tauri commands for local manual transcription.
 
 use std::path::PathBuf;
 use std::sync::Arc;
 
 use serde::{Deserialize, Serialize};
-use tauri::{AppHandle, State};
+use tauri::{AppHandle, Manager, State};
 use tracing::info;
 
+use crate::commands::parakeet::ParakeetModelManagerState;
 use crate::transcription::{
     model_manager::ModelManager,
-    whisper::{WhisperEngine, WhisperParams},
+    parakeet::ParakeetEngine,
+    whisper::{read_wav_as_f32, WhisperEngine, WhisperParams},
 };
 
 pub struct WhisperEngineState(pub Arc<WhisperEngine>);
@@ -23,13 +25,27 @@ impl Default for WhisperEngineState {
 #[derive(Debug, Deserialize)]
 pub struct TranscribeRequest {
     pub wav_path: String,
-    pub model_id: String,
-    #[serde(default)]
-    pub language: Option<String>,
-    #[serde(default)]
-    pub initial_prompt: Option<String>,
-    #[serde(default)]
-    pub n_threads: Option<usize>,
+    #[serde(flatten)]
+    pub source: ManualTranscriptionSource,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(tag = "source", rename_all = "lowercase")]
+pub enum ManualTranscriptionSource {
+    Whisper {
+        model_id: String,
+        #[serde(default)]
+        language: Option<String>,
+        #[serde(default)]
+        initial_prompt: Option<String>,
+        #[serde(default)]
+        n_threads: Option<usize>,
+    },
+    Parakeet {
+        model_id: String,
+        #[serde(default)]
+        language: Option<String>,
+    },
 }
 
 #[derive(Debug, Serialize)]
@@ -39,6 +55,130 @@ pub struct TranscribeResponse {
     pub duration_ms: u64,
 }
 
+trait WhisperTranscriber {
+    fn whisper(
+        &self,
+        model_path: &std::path::Path,
+        samples: &[f32],
+        params: &WhisperParams,
+    ) -> anyhow::Result<String>;
+}
+
+trait ParakeetTranscriber {
+    fn parakeet(
+        &self,
+        model_path: &std::path::Path,
+        samples: &[f32],
+        language: Option<&str>,
+    ) -> anyhow::Result<String>;
+}
+
+struct WhisperEngineTranscriber {
+    engine: Arc<WhisperEngine>,
+}
+
+impl WhisperTranscriber for WhisperEngineTranscriber {
+    fn whisper(
+        &self,
+        model_path: &std::path::Path,
+        samples: &[f32],
+        params: &WhisperParams,
+    ) -> anyhow::Result<String> {
+        self.engine.load(model_path)?;
+        self.engine.transcribe_samples(samples, params)
+    }
+}
+
+struct ParakeetEngineTranscriber {
+    engine: Arc<ParakeetEngine>,
+}
+
+impl ParakeetTranscriber for ParakeetEngineTranscriber {
+    fn parakeet(
+        &self,
+        model_path: &std::path::Path,
+        samples: &[f32],
+        language: Option<&str>,
+    ) -> anyhow::Result<String> {
+        self.engine.ensure_loaded(model_path)?;
+        self.engine.transcribe_samples(samples, language)
+    }
+}
+
+enum TranscriptionRoute<'a> {
+    Whisper {
+        transcriber: &'a dyn WhisperTranscriber,
+        model: Option<PathBuf>,
+    },
+    Parakeet {
+        transcriber: &'a dyn ParakeetTranscriber,
+        model: Option<PathBuf>,
+    },
+}
+
+fn dispatch_transcription(
+    req: &TranscribeRequest,
+    route: TranscriptionRoute<'_>,
+) -> Result<String, String> {
+    // Check selected model before touching WAV. This avoids decoding work when model is unavailable.
+    let model = match (&req.source, &route) {
+        (
+            ManualTranscriptionSource::Whisper { model_id, .. },
+            TranscriptionRoute::Whisper { model, .. },
+        ) => model
+            .clone()
+            .ok_or_else(|| format!("modele Whisper non disponible: {model_id}"))?,
+        (
+            ManualTranscriptionSource::Parakeet { model_id, .. },
+            TranscriptionRoute::Parakeet { model, .. },
+        ) => model
+            .clone()
+            .ok_or_else(|| format!("modele Parakeet incomplet ou indisponible: {model_id}"))?,
+        (ManualTranscriptionSource::Parakeet { .. }, TranscriptionRoute::Whisper { .. }) => {
+            return Err("route Parakeet appelee avec un transcripteur Whisper".into())
+        }
+        (ManualTranscriptionSource::Whisper { .. }, TranscriptionRoute::Parakeet { .. }) => {
+            return Err("route Whisper appelee avec un transcripteur Parakeet".into())
+        }
+    };
+
+    let wav_path = PathBuf::from(&req.wav_path);
+    if !wav_path.exists() {
+        return Err(format!("fichier WAV introuvable: {}", req.wav_path));
+    }
+    let samples = read_wav_as_f32(&wav_path)
+        .map_err(|e| format!("lecture WAV {}: {e}", wav_path.display()))?;
+
+    match (&req.source, route) {
+        (
+            ManualTranscriptionSource::Whisper {
+                language,
+                initial_prompt,
+                n_threads,
+                ..
+            },
+            TranscriptionRoute::Whisper { transcriber, .. },
+        ) => transcriber
+            .whisper(
+                &model,
+                &samples,
+                &WhisperParams {
+                    language: language.clone(),
+                    initial_prompt: initial_prompt.clone(),
+                    n_threads: n_threads.unwrap_or(0),
+                },
+            )
+            .map_err(|e| e.to_string()),
+        (
+            ManualTranscriptionSource::Parakeet { language, .. },
+            TranscriptionRoute::Parakeet { transcriber, .. },
+        ) => transcriber
+            .parakeet(&model, &samples, language.as_deref())
+            .map_err(|e| e.to_string()),
+        _ => unreachable!("route validated against transcription source"),
+    }
+}
+
 #[tauri::command]
 pub async fn transcribe_wav(
     app: AppHandle,
@@ -46,35 +186,55 @@ pub async fn transcribe_wav(
     models_state: State<'_, super::models::ModelManagerState>,
     req: TranscribeRequest,
 ) -> Result<TranscribeResponse, String> {
-    let engine = engine_state.0.clone();
-    let models: Arc<ModelManager> = models_state.0.clone();
-    let _ = app;
-
-    let model_path: PathBuf = models
-        .path_if_present(&req.model_id)
-        .ok_or_else(|| format!("modele non telecharge: {}", req.model_id))?;
-
-    let wav_path = PathBuf::from(&req.wav_path);
-    if !wav_path.exists() {
-        return Err(format!("fichier WAV introuvable: {}", req.wav_path));
-    }
-
-    let params = WhisperParams {
-        language: req.language,
-        initial_prompt: req.initial_prompt,
-        n_threads: req.n_threads.unwrap_or(0),
+    let req = Arc::new(req);
+    let model_id = match &req.source {
+        ManualTranscriptionSource::Whisper { model_id, .. }
+        | ManualTranscriptionSource::Parakeet { model_id, .. } => model_id.clone(),
     };
-
-    let model_id = req.model_id.clone();
     let start = std::time::Instant::now();
-    let text = tokio::task::spawn_blocking(move || -> Result<String, String> {
-        engine.load(&model_path).map_err(|e| e.to_string())?;
-        engine
-            .transcribe_wav(&wav_path, &params)
-            .map_err(|e| e.to_string())
-    })
-    .await
-    .map_err(|e| format!("tache transcription panic: {e}"))??;
+    let text = match &req.source {
+        ManualTranscriptionSource::Whisper { model_id, .. } => {
+            let models: Arc<ModelManager> = models_state.0.clone();
+            let whisper_model = models.path_if_present(model_id);
+            let transcriber = WhisperEngineTranscriber {
+                engine: engine_state.0.clone(),
+            };
+            let req = req.clone();
+            tokio::task::spawn_blocking(move || {
+                dispatch_transcription(
+                    &req,
+                    TranscriptionRoute::Whisper {
+                        transcriber: &transcriber,
+                        model: whisper_model,
+                    },
+                )
+            })
+            .await
+            .map_err(|e| format!("tache transcription panic: {e}"))??
+        }
+        ManualTranscriptionSource::Parakeet { model_id, .. } => {
+            let parakeet_models = app.state::<ParakeetModelManagerState>().0.clone();
+            let parakeet_model = parakeet_models.path_for_id(model_id);
+            let transcriber = ParakeetEngineTranscriber {
+                engine: app
+                    .state::<crate::transcription::parakeet::ParakeetEngineState>()
+                    .0
+                    .clone(),
+            };
+            let req = req.clone();
+            tokio::task::spawn_blocking(move || {
+                dispatch_transcription(
+                    &req,
+                    TranscriptionRoute::Parakeet {
+                        transcriber: &transcriber,
+                        model: parakeet_model,
+                    },
+                )
+            })
+            .await
+            .map_err(|e| format!("tache transcription panic: {e}"))??
+        }
+    };
 
     let duration_ms = start.elapsed().as_millis() as u64;
     info!(
@@ -89,4 +249,224 @@ pub async fn transcribe_wav(
         model_id,
         duration_ms,
     })
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::ops::Deref;
+    use std::sync::{
+        atomic::{AtomicU64, Ordering},
+        Mutex,
+    };
+
+    struct Fake {
+        whisper: Mutex<Option<WhisperParams>>,
+        parakeet: Mutex<Option<Vec<f32>>>,
+    }
+    impl WhisperTranscriber for Fake {
+        fn whisper(
+            &self,
+            _: &std::path::Path,
+            samples: &[f32],
+            params: &WhisperParams,
+        ) -> anyhow::Result<String> {
+            *self.whisper.lock().unwrap() = Some(params.clone());
+            assert!(!samples.is_empty());
+            Ok("whisper text".into())
+        }
+    }
+
+    impl ParakeetTranscriber for Fake {
+        fn parakeet(
+            &self,
+            _: &std::path::Path,
+            samples: &[f32],
+            _: Option<&str>,
+        ) -> anyhow::Result<String> {
+            *self.parakeet.lock().unwrap() = Some(samples.to_vec());
+            Ok("parakeet text".into())
+        }
+    }
+
+    struct TempWav(PathBuf);
+
+    impl Deref for TempWav {
+        type Target = std::path::Path;
+
+        fn deref(&self) -> &Self::Target {
+            &self.0
+        }
+    }
+
+    impl AsRef<std::path::Path> for TempWav {
+        fn as_ref(&self) -> &std::path::Path {
+            &self.0
+        }
+    }
+
+    impl Drop for TempWav {
+        fn drop(&mut self) {
+            let _ = std::fs::remove_file(&self.0);
+        }
+    }
+
+    fn wav() -> TempWav {
+        static NEXT_TEMP_FILE: AtomicU64 = AtomicU64::new(0);
+
+        let path = loop {
+            let timestamp = std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos();
+            let counter = NEXT_TEMP_FILE.fetch_add(1, Ordering::Relaxed);
+            let candidate = std::env::temp_dir().join(format!(
+                "parla-manual-{}-{timestamp}-{counter}.wav",
+                std::process::id()
+            ));
+            if std::fs::OpenOptions::new()
+                .write(true)
+                .create_new(true)
+                .open(&candidate)
+                .is_ok()
+            {
+                break candidate;
+            }
+        };
+        let spec = hound::WavSpec {
+            channels: 1,
+            sample_rate: 16_000,
+            bits_per_sample: 16,
+            sample_format: hound::SampleFormat::Int,
+        };
+        let temp = TempWav(path);
+        let mut writer = hound::WavWriter::create(&temp, spec).unwrap();
+        writer.write_sample(0i16).unwrap();
+        writer.finalize().unwrap();
+        temp
+    }
+
+    #[test]
+    fn dispatcher_forwards_whisper_only_parameters() {
+        let path = wav();
+        let fake = Fake {
+            whisper: Mutex::new(None),
+            parakeet: Mutex::new(None),
+        };
+        let req = TranscribeRequest {
+            wav_path: path.to_string_lossy().into(),
+            source: ManualTranscriptionSource::Whisper {
+                model_id: "w".into(),
+                language: Some("de".into()),
+                initial_prompt: Some("prompt".into()),
+                n_threads: Some(7),
+            },
+        };
+        assert_eq!(
+            dispatch_transcription(
+                &req,
+                TranscriptionRoute::Whisper {
+                    transcriber: &fake,
+                    model: Some(PathBuf::from("w")),
+                },
+            )
+            .unwrap(),
+            "whisper text"
+        );
+        let params = fake.whisper.lock().unwrap().clone().unwrap();
+        assert_eq!(params.language.as_deref(), Some("de"));
+        assert_eq!(params.initial_prompt.as_deref(), Some("prompt"));
+        assert_eq!(params.n_threads, 7);
+        assert!(fake.parakeet.lock().unwrap().is_none());
+    }
+
+    #[test]
+    fn dispatcher_reads_wav_for_parakeet_route() {
+        let path = wav();
+        let fake = Fake {
+            whisper: Mutex::new(None),
+            parakeet: Mutex::new(None),
+        };
+        let req = TranscribeRequest {
+            wav_path: path.to_string_lossy().into(),
+            source: ManualTranscriptionSource::Parakeet {
+                model_id: "p".into(),
+                language: None,
+            },
+        };
+        assert_eq!(
+            dispatch_transcription(
+                &req,
+                TranscriptionRoute::Parakeet {
+                    transcriber: &fake,
+                    model: Some(PathBuf::from("p")),
+                },
+            )
+            .unwrap(),
+            "parakeet text"
+        );
+        assert!(fake.whisper.lock().unwrap().is_none());
+        assert_eq!(fake.parakeet.lock().unwrap().as_ref().unwrap().len(), 1);
+    }
+
+    #[test]
+    fn dispatcher_rejects_missing_wav_and_selected_model() {
+        let fake = Fake {
+            whisper: Mutex::new(None),
+            parakeet: Mutex::new(None),
+        };
+        let req = TranscribeRequest {
+            wav_path: "missing.wav".into(),
+            source: ManualTranscriptionSource::Whisper {
+                model_id: "w".into(),
+                language: None,
+                initial_prompt: None,
+                n_threads: None,
+            },
+        };
+        assert!(dispatch_transcription(
+            &req,
+            TranscriptionRoute::Whisper {
+                transcriber: &fake,
+                model: Some(PathBuf::from("w")),
+            },
+        )
+        .unwrap_err()
+        .contains("introuvable"));
+        let path = wav();
+        let req = TranscribeRequest {
+            wav_path: path.to_string_lossy().into(),
+            source: ManualTranscriptionSource::Whisper {
+                model_id: "w".into(),
+                language: None,
+                initial_prompt: None,
+                n_threads: None,
+            },
+        };
+        assert!(dispatch_transcription(
+            &req,
+            TranscriptionRoute::Whisper {
+                transcriber: &fake,
+                model: None,
+            },
+        )
+        .unwrap_err()
+        .contains("modele Whisper non disponible"));
+        let req = TranscribeRequest {
+            wav_path: path.to_string_lossy().into(),
+            source: ManualTranscriptionSource::Parakeet {
+                model_id: "p".into(),
+                language: None,
+            },
+        };
+        assert!(dispatch_transcription(
+            &req,
+            TranscriptionRoute::Parakeet {
+                transcriber: &fake,
+                model: None,
+            },
+        )
+        .unwrap_err()
+        .contains("incomplet"));
+    }
 }

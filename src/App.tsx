@@ -35,7 +35,12 @@ import { RecorderPanel } from "@/components/RecorderPanel";
 import { TranscribePanel } from "@/components/TranscribePanel";
 import { UpdateChecker } from "@/components/UpdateChecker";
 import { VadPanel } from "@/components/VadPanel";
-import { api, type GpuInfo, type RecordingStopped } from "@/lib/tauri";
+import {
+  api,
+  type GpuInfo,
+  type RecordingStopped,
+  type TranscriptionSource,
+} from "@/lib/tauri";
 import "./App.css";
 
 function App() {
@@ -43,6 +48,8 @@ function App() {
   const [view, setView] = useState<View>("dashboard");
   const [gpu, setGpu] = useState<GpuInfo | null>(null);
   const [selectedModelId, setSelectedModelId] = useState<string | null>(null);
+  const [transcriptionSource, setTranscriptionSource] =
+    useState<TranscriptionSource | null>(null);
   const [lastWavPath, setLastWavPath] = useState<string | null>(null);
   const [onboarded, setOnboarded] = useState<boolean | null>(null);
 
@@ -52,6 +59,7 @@ function App() {
       .getSelectedWhisperModel()
       .then((id) => setSelectedModelId(id))
       .catch(console.error);
+    api.getTranscriptionSource().then(setTranscriptionSource).catch(console.error);
     api
       .getOnboardingCompleted()
       .then(setOnboarded)
@@ -59,6 +67,9 @@ function App() {
 
     const unlisten = listen<RecordingStopped>("recording:stopped", (e) => {
       setLastWavPath(e.payload.wav_path);
+    });
+    const unSource = listen<TranscriptionSource>("source:changed", (e) => {
+      setTranscriptionSource(e.payload);
     });
 
     // Tray menu triggers (navigate to a panel, copy notification, update check).
@@ -88,6 +99,7 @@ function App() {
 
     return () => {
       unlisten.then((fn) => fn());
+      unSource.then((fn) => fn());
       unNav.then((fn) => fn());
       unNotice.then((fn) => fn());
       unToggle.then((fn) => fn());
@@ -140,7 +152,7 @@ function App() {
               <RecorderPanel />
               <TranscribePanel
                 lastWavPath={lastWavPath}
-                selectedModelId={selectedModelId}
+                source={transcriptionSource}
               />
             </>
           )}
