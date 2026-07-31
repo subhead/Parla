@@ -23,7 +23,6 @@ export function TranscribePanel({ lastWavPath, source }: Props) {
   const [text, setText] = useState<string>("");
   const [durationMs, setDurationMs] = useState<number | null>(null);
   const [language, setLanguage] = useState<string>("auto");
-  const [initialPrompt, setInitialPrompt] = useState("");
   const [nThreads, setNThreads] = useState(4);
   const [whisperModels, setWhisperModels] = useState<WhisperModelState[]>([]);
   const [parakeetModels, setParakeetModels] = useState<ParakeetModelState[]>([]);
@@ -46,7 +45,6 @@ export function TranscribePanel({ lastWavPath, source }: Props) {
             source: "whisper" as const,
             model_id: activeModel.id,
             language: language === "auto" ? null : language,
-            initial_prompt: initialPrompt.trim() || null,
             n_threads: nThreads > 0 ? nThreads : null,
           };
       const res = await api.transcribeWav({ wav_path: lastWavPath, ...request });
@@ -128,16 +126,10 @@ export function TranscribePanel({ lastWavPath, source }: Props) {
             </select>
           </div>
           {!isParakeet && (
-            <>
-              <label className="text-xs font-medium">
-                {t("transcribe.initialPrompt")}
-                <input value={initialPrompt} onChange={(e) => setInitialPrompt(e.target.value)} disabled={busy} className="mt-1 flex h-9 w-48 rounded-md border border-input bg-background px-3 text-sm font-normal" />
-              </label>
-              <label className="text-xs font-medium">
-                {t("transcribe.threads")}
-                <input type="number" min={1} max={64} value={nThreads} onChange={(e) => setNThreads(Number(e.target.value))} disabled={busy} className="mt-1 flex h-9 w-20 rounded-md border border-input bg-background px-3 text-sm font-normal" />
-              </label>
-            </>
+            <label className="text-xs font-medium">
+              {t("transcribe.threads")}
+              <input type="number" min={1} max={64} value={nThreads} onChange={(e) => setNThreads(Number(e.target.value))} disabled={busy} className="mt-1 flex h-9 w-20 rounded-md border border-input bg-background px-3 text-sm font-normal" />
+            </label>
           )}
           <Button onClick={run} disabled={disabled}>
             {busy ? <Loader2 className="animate-spin" /> : <Play />}

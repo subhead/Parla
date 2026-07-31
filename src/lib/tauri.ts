@@ -68,7 +68,6 @@ export type TranscribeRequest =
       source: "whisper";
       model_id: string;
       language: string | null;
-      initial_prompt: string | null;
       n_threads: number | null;
     }
   | {
