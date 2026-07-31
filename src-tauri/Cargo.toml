@@ -39,6 +39,7 @@ cpal = "0.15"
 hound = "3.5"
 rubato = "0.16"
 ringbuf = "0.4"
+symphonia = { version = "0.5", features = ["all"] }
 # Lecture des sons de feedback (start / stop / cancel). rodio 0.20 partage
 # le meme cpal 0.15 que la capture, donc pas de doublon dans l'arbre.
 rodio = "0.20"

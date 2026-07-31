@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { FileText, Loader2, Play } from "lucide-react";
+import { open as openDialog } from "@tauri-apps/plugin-dialog";
+import { FileAudio, FileText, FolderOpen, Loader2, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -27,9 +28,44 @@ export function TranscribePanel({ lastWavPath, source }: Props) {
   const [whisperModels, setWhisperModels] = useState<WhisperModelState[]>([]);
   const [parakeetModels, setParakeetModels] = useState<ParakeetModelState[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [selectedFilePath, setSelectedFilePath] = useState<string | null>(null);
+
+  const audioExtensions = [
+    "wav",
+    "mp3",
+    "m4a",
+    "flac",
+    "ogg",
+    "opus",
+    "webm",
+    "mp4",
+    "m4v",
+    "mkv",
+    "caf",
+  ];
+  const audioPath = selectedFilePath ?? lastWavPath;
+  const audioName = audioPath?.split(/[\\/]/).pop() ?? null;
+
+  async function chooseAudioFile() {
+    setError(null);
+    try {
+      const selected = await openDialog({
+        multiple: false,
+        filters: [{ name: t("transcribe.audioFiles"), extensions: audioExtensions }],
+        title: t("transcribe.chooseAudioTitle"),
+      });
+      if (selected && typeof selected === "string") {
+        setSelectedFilePath(selected);
+        setText("");
+        setDurationMs(null);
+      }
+    } catch (e) {
+      setError(String(e));
+    }
+  }
 
   async function run() {
-    if (!lastWavPath || !activeModel || !ready) return;
+    if (!audioPath || !activeModel || !ready) return;
     setBusy(true);
     setError(null);
     setText("");
@@ -47,7 +83,7 @@ export function TranscribePanel({ lastWavPath, source }: Props) {
             language: language === "auto" ? null : language,
             n_threads: nThreads > 0 ? nThreads : null,
           };
-      const res = await api.transcribeWav({ wav_path: lastWavPath, ...request });
+      const res = await api.transcribeWav({ wav_path: audioPath, ...request });
       setText(res.text);
       setDurationMs(res.duration_ms);
     } catch (e) {
@@ -75,7 +111,7 @@ export function TranscribePanel({ lastWavPath, source }: Props) {
           (activeModel as ParakeetModelState).missing_files.length === 0
         : (activeModel as WhisperModelState).downloaded),
   );
-  const disabled = !lastWavPath || !activeModel || !ready || busy || source?.kind === "cloud";
+  const disabled = !audioPath || !activeModel || !ready || busy || source?.kind === "cloud";
 
   useEffect(() => {
     Promise.all([api.listWhisperModels(), api.listParakeetModels()])
@@ -105,6 +141,43 @@ export function TranscribePanel({ lastWavPath, source }: Props) {
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
+        <div className="rounded-md border bg-muted/30 p-3">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex min-w-0 items-center gap-2">
+              <FileAudio className="h-4 w-4 shrink-0 text-muted-foreground" />
+              <div className="min-w-0">
+                <p className="text-xs font-medium text-muted-foreground">
+                  {t("transcribe.audioSource")}
+                </p>
+                {audioPath ? (
+                  <p className="truncate text-sm font-medium" title={audioPath}>
+                    {audioName}
+                  </p>
+                ) : (
+                  <p className="text-sm text-muted-foreground">{t("transcribe.noAudio")}</p>
+                )}
+              </div>
+            </div>
+            <Button variant="outline" size="sm" onClick={chooseAudioFile} disabled={busy}>
+              <FolderOpen />
+              {t(selectedFilePath ? "transcribe.replaceAudio" : "transcribe.chooseAudio")}
+            </Button>
+          </div>
+          {audioPath && (
+            <p className="mt-2 break-all text-xs text-muted-foreground">{audioPath}</p>
+          )}
+          {selectedFilePath && lastWavPath && (
+            <Button
+              variant="link"
+              size="sm"
+              className="mt-1 h-auto px-0 text-xs"
+              onClick={() => setSelectedFilePath(null)}
+              disabled={busy}
+            >
+              {t("transcribe.useLatestRecording")}
+            </Button>
+          )}
+        </div>
         <div className="flex items-center justify-between rounded-md border bg-muted/30 px-3 py-2 text-sm">
           <span className="text-muted-foreground">{t("transcribe.activeModel")}</span>
           <span className="font-medium">{activeModel?.display_name ?? t("transcribe.noSource")}</span>
@@ -136,11 +209,11 @@ export function TranscribePanel({ lastWavPath, source }: Props) {
             {t("transcribe.transcribe")}
           </Button>
           <div className="text-xs text-muted-foreground">
-            {!lastWavPath && t("transcribe.recordFirst")}
-            {lastWavPath && !source && t("transcribe.noSource")}
-            {lastWavPath && source?.kind === "cloud" && t("transcribe.cloudUnavailable")}
-            {lastWavPath && source && !activeModel && t("transcribe.selectModel")}
-            {lastWavPath && activeModel && !ready && t("transcribe.modelUnavailable")}
+            {!audioPath && t("transcribe.chooseOrRecord")}
+            {audioPath && !source && t("transcribe.noSource")}
+            {audioPath && source?.kind === "cloud" && t("transcribe.cloudUnavailable")}
+            {audioPath && source && !activeModel && t("transcribe.selectModel")}
+            {audioPath && activeModel && !ready && t("transcribe.modelUnavailable")}
             {durationMs != null &&
               t("transcribe.completedIn", {
                 seconds: (durationMs / 1000).toFixed(2),

@@ -7,6 +7,7 @@
 // - Transcription/Core/Whisper/WhisperModelManager.swift (download + storage)
 // - Models/PredefinedModels.swift (catalogue de modeles)
 
+pub mod audio;
 pub mod cloud;
 pub mod engine;
 pub mod model;

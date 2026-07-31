@@ -9,9 +9,10 @@ use tracing::info;
 
 use crate::commands::parakeet::ParakeetModelManagerState;
 use crate::transcription::{
+    audio::read_audio_as_f32,
     model_manager::ModelManager,
     parakeet::ParakeetEngine,
-    whisper::{read_wav_as_f32, WhisperEngine, WhisperParams},
+    whisper::{WhisperEngine, WhisperParams},
 };
 
 pub struct WhisperEngineState(pub Arc<WhisperEngine>);
@@ -142,12 +143,18 @@ fn dispatch_transcription(
         }
     };
 
-    let wav_path = PathBuf::from(&req.wav_path);
-    if !wav_path.exists() {
-        return Err(format!("fichier WAV introuvable: {}", req.wav_path));
+    let audio_path = PathBuf::from(&req.wav_path);
+    if !audio_path.exists() {
+        return Err(format!("audio file not found: {}", req.wav_path));
     }
-    let samples = read_wav_as_f32(&wav_path)
-        .map_err(|e| format!("lecture WAV {}: {e}", wav_path.display()))?;
+    if !audio_path.is_file() {
+        return Err(format!(
+            "audio path is not a regular file: {}",
+            req.wav_path
+        ));
+    }
+    let samples = read_audio_as_f32(&audio_path)
+        .map_err(|e| format!("could not read audio {}: {e}", audio_path.display()))?;
 
     match (&req.source, route) {
         (
@@ -432,7 +439,7 @@ mod tests {
             },
         )
         .unwrap_err()
-        .contains("introuvable"));
+        .contains("not found"));
         let path = wav();
         let req = TranscribeRequest {
             wav_path: path.to_string_lossy().into(),
