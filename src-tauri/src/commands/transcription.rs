@@ -179,9 +179,10 @@ fn dispatch_transcription(
         (
             ManualTranscriptionSource::Parakeet { language, .. },
             TranscriptionRoute::Parakeet { transcriber, .. },
-        ) => transcriber
-            .parakeet(&model, &samples, language.as_deref())
-            .map_err(|e| e.to_string()),
+        ) => crate::transcription::parakeet::transcribe_parakeet_chunks(&samples, None, |chunk| {
+            transcriber.parakeet(&model, chunk, language.as_deref())
+        })
+        .map_err(|e| e.to_string()),
         _ => unreachable!("route validated against transcription source"),
     }
 }
@@ -261,6 +262,7 @@ pub async fn transcribe_wav(
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::collections::VecDeque;
     use std::ops::Deref;
     use std::sync::{
         atomic::{AtomicU64, Ordering},
@@ -269,7 +271,9 @@ mod tests {
 
     struct Fake {
         whisper: Mutex<Option<WhisperParams>>,
-        parakeet: Mutex<Option<Vec<f32>>>,
+        parakeet_calls: Mutex<Vec<usize>>,
+        parakeet_first_samples: Mutex<Vec<f32>>,
+        parakeet_results: Mutex<VecDeque<Result<String, String>>>,
     }
     impl WhisperTranscriber for Fake {
         fn whisper(
@@ -291,8 +295,13 @@ mod tests {
             samples: &[f32],
             _: Option<&str>,
         ) -> anyhow::Result<String> {
-            *self.parakeet.lock().unwrap() = Some(samples.to_vec());
-            Ok("parakeet text".into())
+            self.parakeet_calls.lock().unwrap().push(samples.len());
+            self.parakeet_first_samples.lock().unwrap().push(samples[0]);
+            match self.parakeet_results.lock().unwrap().pop_front() {
+                Some(Ok(text)) => Ok(text),
+                Some(Err(error)) => anyhow::bail!(error),
+                None => Ok("parakeet text".into()),
+            }
         }
     }
 
@@ -318,7 +327,11 @@ mod tests {
         }
     }
 
-    fn wav() -> TempWav {
+    fn wav(seconds: usize) -> TempWav {
+        wav_with_markers(seconds, &[])
+    }
+
+    fn wav_with_markers(seconds: usize, markers: &[(usize, i16)]) -> TempWav {
         static NEXT_TEMP_FILE: AtomicU64 = AtomicU64::new(0);
 
         let path = loop {
@@ -348,17 +361,27 @@ mod tests {
         };
         let temp = TempWav(path);
         let mut writer = hound::WavWriter::create(&temp, spec).unwrap();
-        writer.write_sample(0i16).unwrap();
+        for sample in 0..seconds * 16_000 {
+            let second = sample / 16_000;
+            let value = markers
+                .iter()
+                .rev()
+                .find(|&&(marker, _)| marker <= second)
+                .map_or(0, |&(_, value)| value);
+            writer.write_sample(value).unwrap();
+        }
         writer.finalize().unwrap();
         temp
     }
 
     #[test]
     fn dispatcher_forwards_whisper_only_parameters() {
-        let path = wav();
+        let path = wav(1);
         let fake = Fake {
             whisper: Mutex::new(None),
-            parakeet: Mutex::new(None),
+            parakeet_calls: Mutex::new(Vec::new()),
+            parakeet_first_samples: Mutex::new(Vec::new()),
+            parakeet_results: Mutex::new(VecDeque::new()),
         };
         let req = TranscribeRequest {
             wav_path: path.to_string_lossy().into(),
@@ -384,15 +407,17 @@ mod tests {
         assert_eq!(params.language.as_deref(), Some("de"));
         assert_eq!(params.initial_prompt.as_deref(), Some("prompt"));
         assert_eq!(params.n_threads, 7);
-        assert!(fake.parakeet.lock().unwrap().is_none());
+        assert!(fake.parakeet_calls.lock().unwrap().is_empty());
     }
 
     #[test]
     fn dispatcher_reads_wav_for_parakeet_route() {
-        let path = wav();
+        let path = wav(1);
         let fake = Fake {
             whisper: Mutex::new(None),
-            parakeet: Mutex::new(None),
+            parakeet_calls: Mutex::new(Vec::new()),
+            parakeet_first_samples: Mutex::new(Vec::new()),
+            parakeet_results: Mutex::new(VecDeque::from([Ok("parakeet text".into())])),
         };
         let req = TranscribeRequest {
             wav_path: path.to_string_lossy().into(),
@@ -413,14 +438,122 @@ mod tests {
             "parakeet text"
         );
         assert!(fake.whisper.lock().unwrap().is_none());
-        assert_eq!(fake.parakeet.lock().unwrap().as_ref().unwrap().len(), 1);
+        assert_eq!(*fake.parakeet_calls.lock().unwrap(), vec![16_000]);
+    }
+
+    #[test]
+    fn dispatcher_chunks_long_wav_in_order_and_merges_boundary_text() {
+        let path = wav_with_markers(121, &[(0, 1000), (59, 2000), (118, 3000)]);
+        let fake = Fake {
+            whisper: Mutex::new(None),
+            parakeet_calls: Mutex::new(Vec::new()),
+            parakeet_first_samples: Mutex::new(Vec::new()),
+            parakeet_results: Mutex::new(VecDeque::from([
+                Ok("alpha beta".into()),
+                Ok("BETA gamma".into()),
+                Ok("delta".into()),
+            ])),
+        };
+        let req = TranscribeRequest {
+            wav_path: path.to_string_lossy().into(),
+            source: ManualTranscriptionSource::Parakeet {
+                model_id: "p".into(),
+                language: None,
+            },
+        };
+        let text = dispatch_transcription(
+            &req,
+            TranscriptionRoute::Parakeet {
+                transcriber: &fake,
+                model: Some(PathBuf::from("p")),
+            },
+        )
+        .unwrap();
+        let calls = fake.parakeet_calls.lock().unwrap().clone();
+        assert_eq!(calls.len(), 3);
+        assert_eq!(calls[0], 60 * 16_000);
+        assert_eq!(calls[1], 60 * 16_000);
+        assert_eq!(calls[2], 2 * 16_000);
+        assert!(calls.iter().all(|&samples| samples <= 60 * 16_000));
+        let first_samples = fake.parakeet_first_samples.lock().unwrap().clone();
+        assert_eq!(first_samples.len(), 3);
+        assert!((first_samples[0] - 1000.0 / 32_768.0).abs() < 0.001);
+        assert!((first_samples[1] - 2000.0 / 32_768.0).abs() < 0.001);
+        assert!((first_samples[2] - 3000.0 / 32_768.0).abs() < 0.001);
+        assert_eq!(text, "alpha beta gamma delta");
+    }
+
+    #[test]
+    fn dispatcher_exactly_sixty_seconds_calls_once() {
+        let path = wav(60);
+        let fake = Fake {
+            whisper: Mutex::new(None),
+            parakeet_calls: Mutex::new(Vec::new()),
+            parakeet_first_samples: Mutex::new(Vec::new()),
+            parakeet_results: Mutex::new(VecDeque::from([Ok("exact".into())])),
+        };
+        let req = TranscribeRequest {
+            wav_path: path.to_string_lossy().into(),
+            source: ManualTranscriptionSource::Parakeet {
+                model_id: "p".into(),
+                language: None,
+            },
+        };
+        assert_eq!(
+            dispatch_transcription(
+                &req,
+                TranscriptionRoute::Parakeet {
+                    transcriber: &fake,
+                    model: Some(PathBuf::from("p")),
+                }
+            )
+            .unwrap(),
+            "exact"
+        );
+        assert_eq!(*fake.parakeet_calls.lock().unwrap(), vec![60 * 16_000]);
+    }
+
+    #[test]
+    fn dispatcher_second_chunk_failure_returns_no_partial_output() {
+        let path = wav(121);
+        let fake = Fake {
+            whisper: Mutex::new(None),
+            parakeet_calls: Mutex::new(Vec::new()),
+            parakeet_first_samples: Mutex::new(Vec::new()),
+            parakeet_results: Mutex::new(VecDeque::from([
+                Ok("partial".into()),
+                Err("second chunk failed".into()),
+            ])),
+        };
+        let req = TranscribeRequest {
+            wav_path: path.to_string_lossy().into(),
+            source: ManualTranscriptionSource::Parakeet {
+                model_id: "p".into(),
+                language: None,
+            },
+        };
+        let error = dispatch_transcription(
+            &req,
+            TranscriptionRoute::Parakeet {
+                transcriber: &fake,
+                model: Some(PathBuf::from("p")),
+            },
+        )
+        .unwrap_err();
+        assert!(error.contains("second chunk failed"));
+        assert_eq!(
+            *fake.parakeet_calls.lock().unwrap(),
+            vec![60 * 16_000, 60 * 16_000]
+        );
     }
 
     #[test]
     fn dispatcher_rejects_missing_wav_and_selected_model() {
         let fake = Fake {
             whisper: Mutex::new(None),
-            parakeet: Mutex::new(None),
+            parakeet_calls: Mutex::new(Vec::new()),
+            parakeet_first_samples: Mutex::new(Vec::new()),
+            parakeet_results: Mutex::new(VecDeque::new()),
         };
         let req = TranscribeRequest {
             wav_path: "missing.wav".into(),
@@ -440,7 +573,7 @@ mod tests {
         )
         .unwrap_err()
         .contains("not found"));
-        let path = wav();
+        let path = wav(1);
         let req = TranscribeRequest {
             wav_path: path.to_string_lossy().into(),
             source: ManualTranscriptionSource::Whisper {
