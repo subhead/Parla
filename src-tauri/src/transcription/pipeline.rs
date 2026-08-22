@@ -34,6 +34,7 @@ use crate::transcription::{
         CloudRegistry,
     },
     model_manager::ModelManager,
+    parakeet::transcribe_parakeet_chunks,
     vad,
     whisper::{self as whisper_core, WhisperParams},
 };
@@ -526,11 +527,38 @@ async fn run_pipeline(app: AppHandle, wav_path: PathBuf) -> Result<()> {
             .clone();
         let wav_path_clone = wav_path.clone();
         let language_clone = language.clone();
+        let vad_state = vad::vad_state(&app);
+        let vad_engine = if is_vad_enabled(&app) && vad_state.downloaded {
+            Some(
+                app.state::<crate::commands::vad::VadEngineState>()
+                    .0
+                    .clone(),
+            )
+        } else {
+            None
+        };
+        let vad_model_path = vad_state.path.as_ref().map(PathBuf::from);
         let start = std::time::Instant::now();
         let text = task::spawn_blocking(move || -> Result<String> {
             engine_state.ensure_loaded(&model_dir)?;
             let samples = whisper_core::read_wav_as_f32(&wav_path_clone)?;
-            engine_state.transcribe_samples(&samples, language_clone.as_deref())
+            let ranges = if let (Some(vad_engine), Some(vad_path)) = (vad_engine, vad_model_path) {
+                match vad_engine
+                    .load(&vad_path)
+                    .and_then(|_| vad::run_vad_on_wav(&vad_engine, &wav_path_clone))
+                {
+                    Ok((_, ranges)) => Some(ranges),
+                    Err(error) => {
+                        warn!(error = %error, "Parakeet VAD failed; falling back to fixed chunks");
+                        None
+                    }
+                }
+            } else {
+                None
+            };
+            transcribe_parakeet_chunks(&samples, ranges.as_deref(), |chunk| {
+                engine_state.transcribe_samples(chunk, language_clone.as_deref())
+            })
         })
         .await
         .map_err(|e| anyhow!("task join: {e}"))??;
@@ -599,15 +627,13 @@ async fn run_pipeline(app: AppHandle, wav_path: PathBuf) -> Result<()> {
             if ranges.is_empty() {
                 return Ok(String::new());
             }
-            // Concatene les plages de parole en un seul buffer et transcrit.
-            let total: usize = ranges.iter().map(|(s, e)| e - s).sum();
-            let mut speech: Vec<f32> = Vec::with_capacity(total);
-            for (s, e) in &ranges {
-                speech.extend_from_slice(&samples[*s..*e]);
+            let total: usize = ranges.iter().map(|(start, end)| end - start).sum();
+            let mut speech = Vec::with_capacity(total);
+            for (start, end) in &ranges {
+                speech.extend_from_slice(&samples[*start..*end]);
             }
             engine.transcribe_samples(&speech, &params)
         } else {
-            // Path non-VAD : lit le WAV et transcrit tout.
             let samples = whisper_core::read_wav_as_f32(&wav_path_clone)?;
             engine.transcribe_samples(&samples, &params)
         }

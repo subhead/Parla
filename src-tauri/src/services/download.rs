@@ -358,10 +358,40 @@ fn redact_credential_values(message: &str) -> String {
             continue;
         }
         let mut value_start = key_end;
+        let mut json_key = false;
         while value_start < message.len() && message.as_bytes()[value_start].is_ascii_whitespace() {
             value_start += 1;
         }
-        if value_start >= message.len() || !matches!(message.as_bytes()[value_start], b'=' | b':') {
+        if message.as_bytes().get(value_start) == Some(&b'"') {
+            let mut separator_start = value_start + 1;
+            while separator_start < message.len()
+                && !matches!(message.as_bytes()[separator_start], b'=' | b':')
+            {
+                separator_start += 1;
+            }
+            while separator_start < message.len()
+                && message.as_bytes()[separator_start].is_ascii_whitespace()
+            {
+                separator_start += 1;
+            }
+            if message
+                .as_bytes()
+                .get(separator_start)
+                .is_some_and(|byte| matches!(byte, b'=' | b':'))
+            {
+                value_start = separator_start + 1;
+                json_key = true;
+                while value_start < message.len()
+                    && message.as_bytes()[value_start].is_ascii_whitespace()
+                {
+                    value_start += 1;
+                }
+            }
+        }
+        if !json_key
+            && (value_start >= message.len()
+                || !matches!(message.as_bytes()[value_start], b'=' | b':'))
+        {
             output.push_str(&message[cursor..key_end]);
             cursor = key_end;
             continue;
@@ -370,6 +400,7 @@ fn redact_credential_values(message: &str) -> String {
         while value_start < message.len() && message.as_bytes()[value_start].is_ascii_whitespace() {
             value_start += 1;
         }
+        let replacement_start = value_start;
         if message[value_start..]
             .to_ascii_lowercase()
             .starts_with("bearer ")
@@ -398,8 +429,17 @@ fn redact_credential_values(message: &str) -> String {
                 .map(|offset| value_start + offset)
                 .unwrap_or(message.len())
         };
-        output.push_str(&message[cursor..value_start]);
+        output.push_str(
+            &message[cursor..if json_key {
+                replacement_start
+            } else {
+                value_start
+            }],
+        );
         output.push_str("[redacted]");
+        if json_key {
+            output.push('"');
+        }
         cursor = value_end;
     }
     output

@@ -62,13 +62,20 @@ export type DownloadError = {
   message: string;
 };
 
-export type TranscribeRequest = {
-  wav_path: string;
-  model_id: string;
-  language?: string | null;
-  initial_prompt?: string | null;
-  n_threads?: number | null;
-};
+export type TranscribeRequest =
+  | {
+      wav_path: string;
+      source: "whisper";
+      model_id: string;
+      language: string | null;
+      n_threads: number | null;
+    }
+  | {
+      wav_path: string;
+      source: "parakeet";
+      model_id: string;
+      language: string | null;
+    };
 
 export type TranscribeResponse = {
   text: string;

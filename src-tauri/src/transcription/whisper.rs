@@ -8,7 +8,7 @@
 use std::path::Path;
 use std::sync::Arc;
 
-use anyhow::{anyhow, Context, Result};
+use anyhow::{anyhow, Result};
 use parking_lot::Mutex;
 use tracing::{debug, info};
 use whisper_rs::{FullParams, SamplingStrategy, WhisperContext, WhisperContextParameters};
@@ -76,15 +76,6 @@ impl WhisperEngine {
         *self.inner.lock() = Some(ctx);
         *self.loaded_path.lock() = Some(path_str);
         Ok(())
-    }
-
-    /// Transcrit un fichier WAV 16 kHz mono Int16 et retourne le texte.
-    /// Le texte n'est pas post-traite (filter, word-replace, enhance) : ces
-    /// etapes sont faites dans le pipeline superieur, comme VoiceInk.
-    pub fn transcribe_wav(&self, wav_path: &Path, params: &WhisperParams) -> Result<String> {
-        let samples = read_wav_as_f32(wav_path)
-            .with_context(|| format!("lecture WAV {}", wav_path.display()))?;
-        self.transcribe_samples(&samples, params)
     }
 
     /// Transcrit un buffer Float32 mono 16 kHz deja decode (utile pour VAD).
