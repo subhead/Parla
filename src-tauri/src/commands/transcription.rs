@@ -5,6 +5,7 @@ use std::sync::Arc;
 
 use serde::{Deserialize, Serialize};
 use tauri::{AppHandle, Manager, State};
+use tauri_plugin_store::StoreExt;
 use tracing::info;
 
 use crate::commands::parakeet::ParakeetModelManagerState;
@@ -12,6 +13,7 @@ use crate::transcription::{
     audio::read_audio_as_f32,
     model_manager::ModelManager,
     parakeet::ParakeetEngine,
+    vad,
     whisper::{WhisperEngine, WhisperParams},
 };
 
@@ -114,6 +116,7 @@ enum TranscriptionRoute<'a> {
     Parakeet {
         transcriber: &'a dyn ParakeetTranscriber,
         model: Option<PathBuf>,
+        vad_ranges: Option<Vec<(usize, usize)>>,
     },
 }
 
@@ -178,10 +181,16 @@ fn dispatch_transcription(
             .map_err(|e| e.to_string()),
         (
             ManualTranscriptionSource::Parakeet { language, .. },
-            TranscriptionRoute::Parakeet { transcriber, .. },
-        ) => crate::transcription::parakeet::transcribe_parakeet_chunks(&samples, None, |chunk| {
-            transcriber.parakeet(&model, chunk, language.as_deref())
-        })
+            TranscriptionRoute::Parakeet {
+                transcriber,
+                vad_ranges,
+                ..
+            },
+        ) => crate::transcription::parakeet::transcribe_parakeet_chunks(
+            &samples,
+            vad_ranges.as_deref(),
+            |chunk| transcriber.parakeet(&model, chunk, language.as_deref()),
+        )
         .map_err(|e| e.to_string()),
         _ => unreachable!("route validated against transcription source"),
     }
@@ -229,13 +238,56 @@ pub async fn transcribe_wav(
                     .0
                     .clone(),
             };
+            let vad_state = vad::vad_state(&app);
+            let vad_engine = if app
+                .store("parla.settings.json")
+                .ok()
+                .and_then(|store| store.get("vad_enabled"))
+                .and_then(|value| value.as_bool())
+                .unwrap_or(false)
+                && vad_state.downloaded
+            {
+                Some(
+                    app.state::<crate::commands::vad::VadEngineState>()
+                        .0
+                        .clone(),
+                )
+            } else {
+                None
+            };
+            let vad_model_path = vad_state.path.as_ref().map(PathBuf::from);
             let req = req.clone();
             tokio::task::spawn_blocking(move || {
+                let vad_ranges = if let (Some(vad_engine), Some(vad_path)) =
+                    (vad_engine, vad_model_path)
+                {
+                    match vad_engine.load(&vad_path).and_then(|_| vad_engine.segments(&read_audio_as_f32(&PathBuf::from(&req.wav_path)).map_err(|e| anyhow::anyhow!(e))?)) {
+                        Ok(segments) => Some(
+                            segments
+                                .into_iter()
+                                .map(|segment| {
+                                    (
+                                        ((segment.start / 100.0) * 16_000.0) as usize,
+                                        ((segment.end / 100.0) * 16_000.0) as usize,
+                                    )
+                                })
+                                .filter(|(start, end)| start < end)
+                                .collect(),
+                        ),
+                        Err(error) => {
+                            tracing::warn!(error = %error, "manual Parakeet VAD failed; falling back to fixed chunks");
+                            None
+                        }
+                    }
+                } else {
+                    None
+                };
                 dispatch_transcription(
                     &req,
                     TranscriptionRoute::Parakeet {
                         transcriber: &transcriber,
                         model: parakeet_model,
+                        vad_ranges,
                     },
                 )
             })
@@ -432,6 +484,7 @@ mod tests {
                 TranscriptionRoute::Parakeet {
                     transcriber: &fake,
                     model: Some(PathBuf::from("p")),
+                    vad_ranges: None,
                 },
             )
             .unwrap(),
@@ -466,6 +519,7 @@ mod tests {
             TranscriptionRoute::Parakeet {
                 transcriber: &fake,
                 model: Some(PathBuf::from("p")),
+                vad_ranges: None,
             },
         )
         .unwrap();
@@ -473,7 +527,7 @@ mod tests {
         assert_eq!(calls.len(), 3);
         assert_eq!(calls[0], 60 * 16_000);
         assert_eq!(calls[1], 60 * 16_000);
-        assert_eq!(calls[2], 2 * 16_000);
+        assert_eq!(calls[2], 3 * 16_000);
         assert!(calls.iter().all(|&samples| samples <= 60 * 16_000));
         let first_samples = fake.parakeet_first_samples.lock().unwrap().clone();
         assert_eq!(first_samples.len(), 3);
@@ -481,6 +535,43 @@ mod tests {
         assert!((first_samples[1] - 2000.0 / 32_768.0).abs() < 0.001);
         assert!((first_samples[2] - 3000.0 / 32_768.0).abs() < 0.001);
         assert_eq!(text, "alpha beta gamma delta");
+    }
+
+    #[test]
+    fn dispatcher_uses_manual_vad_boundary_for_long_wav() {
+        let path = wav_with_markers(121, &[(0, 1000), (59, 2000), (118, 3000)]);
+        let fake = Fake {
+            whisper: Mutex::new(None),
+            parakeet_calls: Mutex::new(Vec::new()),
+            parakeet_first_samples: Mutex::new(Vec::new()),
+            parakeet_results: Mutex::new(VecDeque::from([
+                Ok("first".into()),
+                Ok("second".into()),
+                Ok("third".into()),
+            ])),
+        };
+        let req = TranscribeRequest {
+            wav_path: path.to_string_lossy().into(),
+            source: ManualTranscriptionSource::Parakeet {
+                model_id: "p".into(),
+                language: None,
+            },
+        };
+
+        dispatch_transcription(
+            &req,
+            TranscriptionRoute::Parakeet {
+                transcriber: &fake,
+                model: Some(PathBuf::from("p")),
+                vad_ranges: Some(vec![(58 * 16_000, 59 * 16_000)]),
+            },
+        )
+        .unwrap();
+
+        assert_eq!(
+            *fake.parakeet_calls.lock().unwrap(),
+            vec![59 * 16_000, 60 * 16_000, 3 * 16_000]
+        );
     }
 
     #[test]
@@ -505,6 +596,7 @@ mod tests {
                 TranscriptionRoute::Parakeet {
                     transcriber: &fake,
                     model: Some(PathBuf::from("p")),
+                    vad_ranges: None,
                 }
             )
             .unwrap(),
@@ -537,6 +629,7 @@ mod tests {
             TranscriptionRoute::Parakeet {
                 transcriber: &fake,
                 model: Some(PathBuf::from("p")),
+                vad_ranges: None,
             },
         )
         .unwrap_err();
@@ -604,6 +697,7 @@ mod tests {
             TranscriptionRoute::Parakeet {
                 transcriber: &fake,
                 model: None,
+                vad_ranges: None,
             },
         )
         .unwrap_err()
