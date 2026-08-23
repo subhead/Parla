@@ -23,7 +23,7 @@ Open a discussion or issue with the `enhancement` label. Please describe the pro
 
 ## Translations
 
-Parla ships with French, English, Spanish and German translations under `src/i18n/locales/`. If you want to add another language or improve an existing translation:
+Parla ships with French (`fr`), English (`en`), Spanish (`es`), German (`de`) and Japanese (`ja`) translations under `src/i18n/locales/`. If you want to add another language or improve an existing translation:
 
 - Copy `en.json` to `<lang>.json`
 - Translate the values (keys stay untouched)
