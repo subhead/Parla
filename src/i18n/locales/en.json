@@ -390,6 +390,7 @@
     "customModelPlaceholder": "exact model name expected by the endpoint",
     "apiKeyLabel": "{{provider}} API key",
     "apiKey": "API key",
+    "apiKeyOptionalDescription": "Optional. Leave empty to use this endpoint without an API key. Keys are stored securely and never shown here.",
     "apiKeySavedPlaceholder": "(key already saved)",
     "configured": "configured",
     "saveKey": "Save",

@@ -333,6 +333,10 @@ pub async fn enhance_with_override(
         api_keys::get_api_key(provider.id())
             .map_err(|e| anyhow!("keyring: {e}"))?
             .ok_or_else(|| anyhow!("aucune cle API pour {}", provider.id()))?
+    } else if provider.id() == "custom" {
+        api_keys::get_api_key(provider.id())
+            .map_err(|e| anyhow!("keyring: {e}"))?
+            .unwrap_or_default()
     } else {
         String::new()
     };

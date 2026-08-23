@@ -390,6 +390,7 @@
     "customModelPlaceholder": "エンドポイントが想定する正確なモデル名",
     "apiKeyLabel": "{{provider}} APIキー",
     "apiKey": "APIキー",
+    "apiKeyOptionalDescription": "任意です。APIキーなしでこのエンドポイントを使う場合は空欄にしてください。キーは安全に保存され、この画面に表示されることはありません。",
     "apiKeySavedPlaceholder": "（キーは保存済み）",
     "configured": "設定済み",
     "saveKey": "保存",

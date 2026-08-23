@@ -127,4 +127,24 @@ mod tests {
             "done"
         );
     }
+
+    #[test]
+    fn request_omits_authorization_when_api_key_is_empty() {
+        let req = EnhancementRequest {
+            system_prompt: "system".into(),
+            user_message: "user".into(),
+            model: "gpt-test".into(),
+            temperature: 0.2,
+            reasoning: ReasoningConfig::default(),
+            timeout: Duration::from_secs(1),
+            endpoint_override: None,
+        };
+
+        let request = build_request("https://example.test/chat", "", &req).unwrap();
+
+        assert!(!request
+            .headers
+            .iter()
+            .any(|(name, _)| name.eq_ignore_ascii_case("authorization")));
+    }
 }

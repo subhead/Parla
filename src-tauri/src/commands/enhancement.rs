@@ -115,7 +115,8 @@ pub fn list_llm_providers(app: AppHandle) -> Result<Vec<LLMProviderInfo>, String
             default_model: p.default_model().into(),
             models: p.default_models().iter().map(|m| (*m).into()).collect(),
             requires_api_key: p.requires_api_key(),
-            has_api_key: p.requires_api_key() && crate::services::api_keys::has_api_key(p.id()),
+            has_api_key: (p.requires_api_key() || p.id() == "custom")
+                && crate::services::api_keys::has_api_key(p.id()),
         })
         .collect())
 }

@@ -102,6 +102,7 @@ export function EnhancementPanel() {
   async function saveCustomBaseUrl() {
     try {
       await api.setCustomBaseUrl(customBaseUrl.trim());
+      await refreshCustomConfiguration();
       setStatus((s) => ({ ...s, custom: t("enhancement.urlSaved") }));
     } catch (e) {
       setStatus((s) => ({ ...s, custom: t("enhancement.errorPrefix", { message: String(e) }) }));
@@ -111,7 +112,19 @@ export function EnhancementPanel() {
   async function selectCustomModel(model: string) {
     setCustomModel(model);
     await api.setLlmSelection("custom", model);
-    setSelection({ provider_id: "custom", model });
+    await refreshCustomConfiguration();
+  }
+
+  async function refreshCustomConfiguration() {
+    const [savedBaseUrl, savedSelection] = await Promise.all([
+      api.getCustomBaseUrl(),
+      api.getLlmSelection(),
+    ]);
+    setCustomBaseUrl(savedBaseUrl ?? "");
+    if (savedSelection?.provider_id === "custom") {
+      setSelection(savedSelection);
+      setCustomModel(savedSelection.model);
+    }
   }
 
   async function toggleEnabled(v: boolean) {
@@ -122,7 +135,13 @@ export function EnhancementPanel() {
   async function selectProvider(providerId: string) {
     const p = providers.find((x) => x.id === providerId);
     if (!p) return;
-    const model = p.default_model || "";
+    let model = p.default_model || "";
+    if (providerId === "custom") {
+      const savedSelection = await api.getLlmSelection();
+      if (savedSelection?.provider_id === "custom") {
+        model = savedSelection.model;
+      }
+    }
     setSelection({ provider_id: providerId, model });
     await api.setLlmSelection(providerId, model);
     if (providerId === "ollama") {
@@ -389,7 +408,7 @@ export function EnhancementPanel() {
           </div>
         )}
 
-        {currentProvider && currentProvider.requires_api_key && (
+        {currentProvider && (currentProvider.requires_api_key || isCustom) && (
           <div
             className={cn(
               "rounded-lg border p-3",
@@ -407,6 +426,11 @@ export function EnhancementPanel() {
                 </span>
               )}
             </div>
+            {isCustom && (
+              <p className="mt-1 text-xs text-muted-foreground">
+                {t("enhancement.apiKeyOptionalDescription")}
+              </p>
+            )}
             <div className="mt-3 grid grid-cols-[1fr_auto_auto] gap-2">
               <input
                 type="password"

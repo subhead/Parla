@@ -390,6 +390,7 @@
     "customModelPlaceholder": "Exakter, vom Endpunkt erwarteter Modellname",
     "apiKeyLabel": "{{provider}}-API-Schlüssel",
     "apiKey": "API-Schlüssel",
+    "apiKeyOptionalDescription": "Optional. Leer lassen, um diesen Endpunkt ohne API-Schlüssel zu verwenden. Schlüssel werden sicher gespeichert und hier nie angezeigt.",
     "apiKeySavedPlaceholder": "(Schlüssel bereits gespeichert)",
     "configured": "konfiguriert",
     "saveKey": "Speichern",

@@ -88,7 +88,9 @@ Compared to existing Windows dictation tools, Parla targets feature parity with 
 | Cerebras | Yes | `https://api.cerebras.ai/v1` |
 | OpenRouter | Yes | `https://openrouter.ai/api/v1` |
 | Local CLI (PowerShell) | No | Local process (pi / claude / codex templates or custom) |
-| Custom OpenAI-compat | Optional | User-configured URL (HTTPS enforced) |
+| Custom OpenAI-compat | Optional | User-configured HTTPS URL |
+
+Custom OpenAI-compatible providers require an HTTPS base URL. API keys are optional, stored securely in Windows Credential Manager, and sent as Bearer authentication when supplied.
 
 ### Prerequisites
 

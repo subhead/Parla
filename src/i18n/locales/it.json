@@ -390,6 +390,7 @@
     "customModelPlaceholder": "nome esatto del modello previsto dall’endpoint",
     "apiKeyLabel": "Chiave API {{provider}}",
     "apiKey": "Chiave API",
+    "apiKeyOptionalDescription": "Facoltativa. Lascia vuoto per usare questo endpoint senza una chiave API. Le chiavi sono archiviate in modo sicuro e non vengono mai mostrate qui.",
     "apiKeySavedPlaceholder": "(chiave già salvata)",
     "configured": "configurato",
     "saveKey": "Salva",
