@@ -9,6 +9,7 @@ import { RatingDots } from "@/components/RatingDots";
 import { cn } from "@/lib/utils";
 import type { ParakeetModelState } from "@/lib/tauri";
 import type { ParakeetDownloadProgress } from "./types";
+import { localizeModel } from "./localizeModel";
 
 function formatBytes(b: number): string {
   if (b < 1024) return `${b} B`;
@@ -39,6 +40,7 @@ export function ParakeetModelCard({
   onSetDefault,
 }: Props) {
   const { t } = useTranslation();
+  const localized = localizeModel(t, "parakeet", m.id, m.display_name, m.notes);
   const pct =
     prog && prog.total > 0
       ? Math.round((prog.downloaded / prog.total) * 100)
@@ -52,8 +54,8 @@ export function ParakeetModelCard({
     >
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
-          <p className="truncate font-medium">{m.display_name}</p>
-          <p className="mt-0.5 text-xs text-muted-foreground">{m.notes}</p>
+          <p className="truncate font-medium">{localized.displayName}</p>
+          <p className="mt-0.5 text-xs text-muted-foreground">{localized.notes}</p>
           <div className="mt-1 flex flex-wrap items-center gap-3 text-[11px] text-muted-foreground">
             <span className="inline-flex items-center gap-1">
               <Cpu className="h-3 w-3" />

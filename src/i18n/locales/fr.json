@@ -629,6 +629,8 @@
     }
   },
   "miniRecorder": {
+    "transcribing": "Transcription",
+    "enhancing": "Amélioration",
     "promptActive": "Prompt actif",
     "enhancementDisabled": "Enhancement desactive",
     "enhancementLlm": "Enhancement LLM",
@@ -702,5 +704,180 @@
       "needsModifier": "Une touche seule n'est autorisee que pour F1-F24, Insert, Delete, Home, End, PageUp/Down, Pause, PrintScreen. Sinon ajoute Ctrl, Alt, Shift ou Win."
     },
     "editCombo": "Cliquer pour modifier la combinaison"
+  },
+  "modelCatalog": {
+    "imported": {
+      "name": "{{name}}",
+      "notes": "{{name}}"
+    },
+    "whisper": {
+      "ggml-tiny": {
+        "name": "Whisper Compact",
+        "notes": "Petit modèle Whisper multilingue."
+      },
+      "ggml-tiny_en": {
+        "name": "Whisper Tiny (anglais)",
+        "notes": "Modèle Whisper en anglais uniquement."
+      },
+      "ggml-base": {
+        "name": "Whisper de base",
+        "notes": "Modèle Whisper multilingue équilibré pour la transcription sur CPU."
+      },
+      "ggml-base_en": {
+        "name": "Whisper Base (anglais)",
+        "notes": "Modèle en anglais uniquement, offrant une meilleure précision en anglais."
+      },
+      "ggml-large-v2": {
+        "name": "Whisper haute capacité v2",
+        "notes": "Modèle multilingue haute précision ; nécessite beaucoup de mémoire vive."
+      },
+      "ggml-large-v3": {
+        "name": "Whisper haute capacité v3",
+        "notes": "Dernier modèle CPU multilingue haute précision."
+      },
+      "ggml-large-v3-turbo": {
+        "name": "Whisper haute capacité v3 rapide",
+        "notes": "Version plus rapide de Large v3, recommandée avec CUDA."
+      },
+      "ggml-large-v3-turbo-q5_0": {
+        "name": "Whisper haute capacité v3 rapide (Q5_0)",
+        "notes": "Modèle quantifié offrant un excellent rapport qualité/taille."
+      }
+    },
+    "parakeet": {
+      "parakeet-tdt-0_6b-v2": {
+        "name": "Parakeet TDT 0.6B v2 (anglais, F16)",
+        "notes": "Modèle de référence. Anglais uniquement. Téléchargement d’environ 2,5 Go."
+      },
+      "parakeet-tdt-0_6b-v2-int8": {
+        "name": "Parakeet TDT 0.6B v2 (anglais, int8)",
+        "notes": "Variante quantifiée int8. Environ 680 Mo. Anglais uniquement."
+      },
+      "parakeet-tdt-0_6b-v3": {
+        "name": "Parakeet TDT 0.6B v3 (multilingue, F16)",
+        "notes": "Modèle multilingue (anglais et 25 langues européennes). Environ 2,5 Go."
+      },
+      "parakeet-tdt-0_6b-v3-int8": {
+        "name": "Parakeet TDT 0.6B v3 (multilingue, int8)",
+        "notes": "Variante multilingue quantifiée. Environ 680 Mo."
+      }
+    },
+    "gguf": {
+      "qwen2_5-3b-instruct-q4": {
+        "name": "Qwen 2.5 3B pour instructions",
+        "notes": "Modèle compact d’instructions pour l’amélioration locale."
+      },
+      "llama-3_2-3b-instruct-q4": {
+        "name": "Llama 3.2 3B pour instructions",
+        "notes": "Modèle Llama compact d’instructions pour l’amélioration locale."
+      },
+      "gemma-2-2b-it-q4": {
+        "name": "Gemma 2 2B IT",
+        "notes": "Modèle compact d’instructions pour l’amélioration locale."
+      },
+      "phi-3_5-mini-instruct-q4": {
+        "name": "Phi 3.5 Mini pour instructions",
+        "notes": "Modèle compact d’instructions pour l’amélioration locale."
+      }
+    },
+    "cloud": {
+      "groq_whisper-large-v3-turbo": {
+        "name": "Whisper haute capacité v3 rapide",
+        "notes": "Transcription cloud rapide."
+      },
+      "elevenlabs_scribe_v1": {
+        "name": "Scribe v1",
+        "notes": "Modèle de transcription vocale ElevenLabs."
+      },
+      "elevenlabs_scribe_v2": {
+        "name": "Scribe v2",
+        "notes": "Modèle de transcription vocale ElevenLabs."
+      },
+      "deepgram_nova-3": {
+        "name": "Nova-3",
+        "notes": "Transcription cloud polyvalente."
+      },
+      "deepgram_nova-3-medical": {
+        "name": "Nova-3 médical",
+        "notes": "Transcription cloud médicale."
+      },
+      "mistral_voxtral-mini-latest": {
+        "name": "Voxtral Mini",
+        "notes": "Modèle de transcription cloud Mistral."
+      },
+      "mistral_voxtral-mini-transcribe-realtime-2602": {
+        "name": "Voxtral Mini en temps réel",
+        "notes": "Modèle de transcription Mistral en temps réel."
+      },
+      "soniox_stt-async-v4": {
+        "name": "STT asynchrone v4",
+        "notes": "Transcription cloud asynchrone."
+      },
+      "soniox_stt-rt-v4": {
+        "name": "STT en temps réel v4",
+        "notes": "Transcription cloud en temps réel."
+      },
+      "speechmatics_speechmatics-enhanced": {
+        "name": "Speechmatics amélioré",
+        "notes": "Transcription cloud améliorée."
+      },
+      "gemini_gemini-2_5-pro": {
+        "name": "Gemini 2.5 Pro (modèle cloud)",
+        "notes": "Modèle de transcription cloud Google."
+      },
+      "gemini_gemini-2_5-flash": {
+        "name": "Gemini 2.5 Flash (modèle cloud)",
+        "notes": "Fast Modèle de transcription cloud Google."
+      },
+      "xai_grok-stt": {
+        "name": "Grok STT",
+        "notes": "Modèle de transcription cloud xAI."
+      },
+      "cartesia_ink-whisper": {
+        "name": "Whisper Ink",
+        "notes": "Modèle de transcription cloud Cartesia."
+      },
+      "assemblyai_universal-3-pro": {
+        "name": "Universal-3 Pro",
+        "notes": "Modèle de transcription cloud AssemblyAI."
+      },
+      "assemblyai_universal-streaming": {
+        "name": "Streaming universel",
+        "notes": "Modèle de transcription AssemblyAI en temps réel."
+      }
+    }
+  },
+  "proxy": {
+    "title": "Proxy de l’application",
+    "description": "Choisissez comment Parla achemine le trafic HTTP(S) sortant : désactivez cette option pour les connexions directes ; activez-la sans URL pour utiliser les paramètres proxy du système, notamment WPAD et l’authentification intégrée ; ou saisissez une URL pour un proxy explicite.",
+    "loading": "Chargement des paramètres du proxy…",
+    "enable": "Activer le proxy de l’application",
+    "enableHelp": "Désactivé : connexions directes. Activé : paramètres système si l’URL est vide, ou proxy explicite si une URL est saisie.",
+    "url": "URL du proxy de l’application",
+    "urlPlaceholder": "https://proxy.example:8080",
+    "urlHelp": "Laissez vide pour utiliser les paramètres proxy du système, notamment WPAD et l’authentification intégrée. Saisissez une URL http, https ou socks5 pour un proxy explicite.",
+    "noProxy": "Entrées sans proxy",
+    "noProxyPlaceholder": "localhost, 127.0.0.1, .example.com, 10.0.0.0/8",
+    "noProxyHelp": "Motifs compatibles avec NO_PROXY, séparés par des virgules. Les destinations correspondantes contournent le proxy ; en mode système, Windows contrôle ces exclusions.",
+    "credentials": "Identifiants du proxy de l’application",
+    "credentialsSavedState": "Identifiants enregistrés dans le coffre d’identifiants du système d’exploitation.",
+    "noCredentials": "Aucun identifiant enregistré.",
+    "removeCredentials": "Supprimer les identifiants",
+    "username": "Nom d’utilisateur",
+    "password": "Mot de passe",
+    "saveCredentials": "Enregistrer les identifiants",
+    "saving": "Enregistrement…",
+    "saveSettings": "Enregistrer les paramètres du proxy",
+    "loadError": "Impossible de charger les paramètres du proxy.",
+    "invalidScheme": "L’URL du proxy doit utiliser http, https ou socks5.",
+    "invalidUrl": "Saisissez une URL de proxy valide.",
+    "credentialsInFields": "Saisissez les identifiants dans les champs dédiés, pas dans l’URL.",
+    "settingsSaved": "Paramètres du proxy enregistrés.",
+    "settingsSaveError": "Impossible d’enregistrer les paramètres du proxy.",
+    "credentialsRequired": "Saisissez un nom d’utilisateur et un mot de passe.",
+    "credentialsSaved": "Identifiants du proxy enregistrés de manière sécurisée.",
+    "credentialsSaveError": "Impossible d’enregistrer les identifiants du proxy.",
+    "credentialsRemoved": "Identifiants du proxy supprimés.",
+    "credentialsRemoveError": "Impossible de supprimer les identifiants du proxy."
   }
 }

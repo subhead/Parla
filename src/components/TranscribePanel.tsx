@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/card";
 import { api, type ParakeetModelState, type TranscriptionSource, type WhisperModelState } from "@/lib/tauri";
 import { languageLabel } from "@/lib/languages";
+import { localizeModel } from "./models/localizeModel";
 
 type Props = {
   lastWavPath: string | null;
@@ -180,7 +181,7 @@ export function TranscribePanel({ lastWavPath, source }: Props) {
         </div>
         <div className="flex items-center justify-between rounded-md border bg-muted/30 px-3 py-2 text-sm">
           <span className="text-muted-foreground">{t("transcribe.activeModel")}</span>
-          <span className="font-medium">{activeModel?.display_name ?? t("transcribe.noSource")}</span>
+          <span className="font-medium">{activeModel ? localizeModel(t, source?.kind === "parakeet" ? "parakeet" : "whisper", activeModel.id, activeModel.display_name, activeModel.notes).displayName : t("transcribe.noSource")}</span>
         </div>
         <div className="flex flex-wrap items-end gap-3">
           <div>

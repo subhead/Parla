@@ -30,6 +30,7 @@ import {
 import { RatingDots } from "@/components/RatingDots";
 import { cn } from "@/lib/utils";
 import type { CloudModel } from "./types";
+import { localizeModel } from "./localizeModel";
 
 type VerifyStatus = "none" | "success" | "failure";
 
@@ -56,6 +57,7 @@ export function CloudModelCard({
   onRemoveKey,
 }: Props) {
   const { t } = useTranslation();
+  const localized = localizeModel(t, "cloud", `${m.provider_id}_${m.model_id}`, m.display_name, m.notes);
   const [isExpanded, setIsExpanded] = useState(false);
   const [apiKey, setApiKey] = useState("");
   const [verifying, setVerifying] = useState(false);
@@ -94,7 +96,7 @@ export function CloudModelCard({
       <div className="flex items-start justify-between gap-3 p-4">
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
-            <p className="font-medium">{m.display_name}</p>
+            <p className="font-medium">{localized.displayName}</p>
             {m.supports_streaming && (
               <span className="rounded bg-muted px-1.5 py-0.5 text-[10px] text-muted-foreground">
                 {t("aiModels.cloud.streaming")}
@@ -115,7 +117,7 @@ export function CloudModelCard({
               <RatingDots value={m.accuracy} />
             </span>
           </div>
-          <p className="mt-1 text-xs text-muted-foreground">{m.notes}</p>
+          <p className="mt-1 text-xs text-muted-foreground">{localized.notes}</p>
         </div>
         <div className="flex shrink-0 items-center gap-1.5">
           {isCurrent ? (
