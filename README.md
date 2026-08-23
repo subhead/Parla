@@ -41,7 +41,7 @@
 - **Global shortcuts** with configurable toggle, push-to-talk or hybrid mode, plus a double-Escape to cancel a recording.
 - **Personal dictionary** of word replacements applied on every transcription (technical terms, product names, custom acronyms).
 - **Prompt detection** via trigger words in your transcript - say "mail ..." and the Email prompt kicks in automatically.
-- **Multilingual UI** - French, English, Spanish, German, Japanese.
+- **Multilingual UI** - French, English, Spanish, German, Japanese, Italian.
 - **NVIDIA CUDA acceleration** for Whisper, Parakeet and local llama.cpp, with transparent CPU fallback.
 - **Auto-updater** via GitHub Releases, so the app keeps itself in sync with new releases.
 
@@ -139,7 +139,7 @@ npm run tauri build
 - [**uiautomation**](https://github.com/leexgone/uiautomation-rs) for Chromium / Firefox / Edge URL extraction
 - [**rusqlite**](https://github.com/rusqlite/rusqlite) (bundled) for the history database
 - [**keyring**](https://github.com/hwchen/keyring-rs) with Windows Credential Manager backend for API keys
-- [**react-i18next**](https://react.i18next.com/) for the UI translations (French, English, Spanish, German, Japanese)
+- [**react-i18next**](https://react.i18next.com/) for the UI translations (French, English, Spanish, German, Japanese, Italian)
 
 ### Architecture
 
@@ -157,7 +157,7 @@ src-tauri/src/
 src/
   components/      - UI panels + mini recorder overlay
   lib/tauri.ts     - IPC bindings
-  i18n/            - locale files (fr, en, es, de, ja)
+  i18n/            - locale files (fr, en, es, de, ja, it)
 ```
 
 ## Known limitations
@@ -195,7 +195,7 @@ Bug reports, feature requests, and pull requests are all welcome. See [CONTRIBUT
 You can also help by:
 - Reporting bugs or regressions via [issues](https://github.com/LitteRabbit-37/Parla/issues)
 - Suggesting features or enhancements
-- Improving the documentation or translations (FR / EN / ES / DE / JA)
+- Improving the documentation or translations (FR / EN / ES / DE / JA / IT)
 
 ## License
 
