@@ -25,6 +25,7 @@ import {
   type GpuInfo,
   type LlamaCppSettings,
 } from "@/lib/tauri";
+import { localizeModel } from "./models/localizeModel";
 
 type DownloadProgress = { id: string; downloaded: number; total: number };
 
@@ -269,6 +270,7 @@ export function LlmLocalPanel() {
             const prog = progress[m.id];
             const st = status[m.id];
             const isSelected = m.id === selectedId;
+            const localized = localizeModel(t, "gguf", m.id, m.display_name, m.notes, m.imported);
             const pct = prog && prog.total > 0
               ? Math.round((prog.downloaded / prog.total) * 100)
               : null;
@@ -284,7 +286,7 @@ export function LlmLocalPanel() {
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
                     <p className="truncate text-sm font-medium">
-                      {m.display_name}
+                      {localized.displayName}
                       {m.imported && (
                         <span className="ml-2 text-[10px] text-muted-foreground">
                           {t("llmLocal.imported")}
@@ -297,7 +299,7 @@ export function LlmLocalPanel() {
                       )}
                     </p>
                     <p className="truncate text-xs text-muted-foreground">
-                      {m.notes}
+                      {localized.notes}
                     </p>
                     <p className="text-[11px] text-muted-foreground">
                       {formatBytes(m.size_bytes)}

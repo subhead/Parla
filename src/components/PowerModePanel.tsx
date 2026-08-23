@@ -26,6 +26,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { cn, powerShortcutLabel } from "@/lib/utils";
+import { localizedModelName } from "@/components/models/localizeModel";
 import {
   api,
   type CustomPrompt,
@@ -551,7 +552,9 @@ function ConfigEditor({
               onChange={(e) =>
                 set("selected_llm_model", e.target.value || null)
               }
-              placeholder={currentProvider?.default_model ?? "-"}
+              placeholder={currentProvider?.default_model
+                ? localizedModelName(t, "gguf", currentProvider.default_model, currentProvider.default_model)
+                : "-"}
               className="h-8 rounded-md border border-input bg-background px-2"
             />
           </label>

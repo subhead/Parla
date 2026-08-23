@@ -47,6 +47,7 @@ type StreamingEvent =
 const BARS = 15;
 
 export function MiniRecorderView() {
+  const { t } = useTranslation();
   const [stage, setStage] = useState<Stage>("recording");
   const [meterDb, setMeterDb] = useState<number>(-160);
   const [partial, setPartial] = useState<string | null>(null);
@@ -231,13 +232,13 @@ export function MiniRecorderView() {
             <AudioVisualizer meterDb={meterDb} />
           )}
           {stage === "transcribing" && !hasLiveText && (
-            <ProcessingStatusDisplay label="Transcribing" intervalMs={180} />
+            <ProcessingStatusDisplay label={t("miniRecorder.transcribing")} intervalMs={180} />
           )}
           {stage === "transcribing" && hasLiveText && (
             <LiveTranscript text={partial ?? ""} />
           )}
           {stage === "enhancing" && (
-            <ProcessingStatusDisplay label="Enhancing" intervalMs={220} />
+            <ProcessingStatusDisplay label={t("miniRecorder.enhancing")} intervalMs={220} />
           )}
           {stage === "idle" && <StaticVisualizer />}
         </div>

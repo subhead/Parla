@@ -1,5 +1,5 @@
 // i18n setup - react-i18next with browser language detection.
-// Supported languages: English (fallback), French, Spanish.
+// Supported languages: English (fallback), French, Spanish, German, Japanese, Italian.
 //
 // The user language is detected in this order: manual override in localStorage,
 // browser navigator, app default (en). It's persisted in localStorage under
@@ -12,14 +12,20 @@ import LanguageDetector from "i18next-browser-languagedetector";
 import en from "./locales/en.json";
 import fr from "./locales/fr.json";
 import es from "./locales/es.json";
+import de from "./locales/de.json";
+import ja from "./locales/ja.json";
+import it from "./locales/it.json";
 
-export const SUPPORTED_LANGUAGES = ["en", "fr", "es"] as const;
+export const SUPPORTED_LANGUAGES = ["en", "fr", "es", "de", "ja", "it"] as const;
 export type SupportedLanguage = (typeof SUPPORTED_LANGUAGES)[number];
 
 export const LANGUAGE_LABELS: Record<SupportedLanguage, string> = {
   en: "English",
   fr: "Francais",
   es: "Espanol",
+  de: "Deutsch",
+  ja: "日本語",
+  it: "Italiano",
 };
 
 i18n
@@ -30,6 +36,9 @@ i18n
       en: { translation: en },
       fr: { translation: fr },
       es: { translation: es },
+      de: { translation: de },
+      ja: { translation: ja },
+      it: { translation: it },
     },
     fallbackLng: "en",
     supportedLngs: SUPPORTED_LANGUAGES,

@@ -1,0 +1,883 @@
+{
+  "common": {
+    "learnMore": "詳しく見る",
+    "info": "情報",
+    "save": "保存",
+    "cancel": "キャンセル",
+    "delete": "削除",
+    "edit": "編集",
+    "close": "閉じる",
+    "open": "開く",
+    "add": "追加",
+    "refresh": "更新",
+    "loading": "読み込み中…",
+    "ok": "OK",
+    "error": "エラー",
+    "enabled": "有効",
+    "disabled": "無効",
+    "yes": "はい",
+    "no": "いいえ",
+    "back": "戻る",
+    "next": "次へ",
+    "done": "完了",
+    "skip": "スキップ",
+    "copied": "コピーしました",
+    "copy": "コピー",
+    "installed": "インストール済み",
+    "notInstalled": "未インストール",
+    "downloading": "ダウンロード中…",
+    "seconds": "秒",
+    "minutes": "分",
+    "download": "ダウンロード",
+    "browse": "参照",
+    "import": "インポート",
+    "activate": "有効化",
+    "deactivate": "無効化",
+    "active": "有効",
+    "inactive": "無効",
+    "unchanged": "変更なし",
+    "remove": "削除",
+    "rename": "名前を変更",
+    "duplicate": "複製",
+    "configure": "設定",
+    "verifying": "検証中…",
+    "saving": "保存中…",
+    "saved": "保存済み",
+    "unsaved": "未保存の変更",
+    "errorPrefix": "エラー: {{message}}",
+    "confirm": "確認",
+    "select": "選択",
+    "selected": "選択済み",
+    "unselected": "未選択",
+    "loadMore": "さらに読み込む",
+    "none": "なし",
+    "speed": "速度",
+    "accuracy": "精度"
+  },
+  "sidebar": {
+    "dashboard": "ダッシュボード",
+    "transcribe": "音声を文字起こし",
+    "history": "履歴",
+    "models": "AIモデル",
+    "enhancement": "拡張",
+    "powerMode": "パワーモード",
+    "dictionary": "辞書",
+    "recorder": "音声入力",
+    "settings": "設定",
+    "permissions": "権限",
+    "postProcessing": "後処理",
+    "vad": "VAD"
+  },
+  "hero": {
+    "dashboardTitle": "ダッシュボード",
+    "dashboardDescription": "Parlaの利用状況の概要です。",
+    "transcribeTitle": "音声を文字起こし",
+    "transcribeDescription": "選択したモデルで既存の音声ファイルを文字起こしします。",
+    "historyTitle": "履歴",
+    "historyDescription": "すべての文字起こしの記録です（ローカルSQLite）。",
+    "modelsTitle": "AIモデル",
+    "modelsDescription": "上部で文字起こしのソースを選択すると、対応するパネルが下に表示されます。",
+    "enhancementTitle": "拡張",
+    "enhancementDescription": "貼り付ける前に、すべての文字起こしをLLM（ローカルまたはクラウド）で処理します。",
+    "powerModeTitle": "パワーモード",
+    "powerModeDescription": "アクティブなアプリごとに、プロンプト・LLM・ソースを切り替えるコンテキスト対応プロファイルです。",
+    "permissionsTitle": "権限",
+    "permissionsDescription": "Parlaが正しく動作するために必要なシステムアクセスを確認します。",
+    "audioTitle": "音声入力",
+    "audioDescription": "マイク、VAD、テキスト後処理。",
+    "dictionaryTitle": "辞書",
+    "dictionaryDescription": "カスタム用語と単語の置換。",
+    "settingsTitle": "設定",
+    "settingsDescription": "Parla全体の設定。",
+    "hardwareGpu": "ハードウェア：NVIDIA GPU {{device}} - CUDA {{cuda}}",
+    "hardwareCpu": "ハードウェア：NVIDIA GPUは検出されませんでした。CPUで実行します"
+  },
+  "dashboard": {
+    "title": "ダッシュボード",
+    "description": "Parlaの設定と最近のアクティビティの概要。",
+    "recorderReady": "レコーダーの準備完了",
+    "gpuDetected": "NVIDIA GPUを検出しました",
+    "gpuNotDetected": "CPUのみ（NVIDIA GPUなし）",
+    "selectedModel": "選択したモデル",
+    "noneSelected": "なし",
+    "recentHistory": "最近の履歴",
+    "seeAll": "すべて見る",
+    "timeSaved": "節約できた時間",
+    "heroEmpty": "最初の録音からParlaの利用が始まります。",
+    "heroWithData": "{{words}}語を{{sessions}}セッションで音声入力しました。",
+    "sessions": "セッション",
+    "sessionsSubtitle": "完了した文字起こし",
+    "wordsDictated": "入力した単語数",
+    "wordsDictatedSubtitle": "生成された単語",
+    "wordsPerMinute": "毎分の単語数",
+    "wordsPerMinuteSubtitle": "キーボード入力時の約40語と比較",
+    "characters": "文字数",
+    "charactersSubtitle": "節約できたキー入力",
+    "historyCount": "履歴に{{count}}件の文字起こし",
+    "historyHint": "履歴パネルで検索、書き出し、削除ができます。"
+  },
+  "modelPerformance": {
+    "title": "モデル パフォーマンス",
+    "description": "選択期間におけるモデルごとの速度と処理時間の内訳。",
+    "transcriptionModels": "文字起こし モデル",
+    "enhancementModels": "拡張 モデル",
+    "sessionCount": "{{count}} セッション(s)",
+    "fasterRealtime": "リアルタイムより高速",
+    "slowerRealtime": "リアルタイムより低速",
+    "avgAudio": "平均音声時間",
+    "avgProcessing": "平均処理時間",
+    "avgEnhancement": "平均拡張時間",
+    "empty": "この期間のデータはまだありません。文字起こしを実行してから戻ってください。",
+    "period": {
+      "last7Days": "過去7日間",
+      "last30Days": "過去30日間",
+      "thisYear": "今年",
+      "allTime": "全期間"
+    }
+  },
+  "updater": {
+    "newVersion": "新しいバージョン{{version}}を利用できます",
+    "install": "インストール",
+    "hide": "隠す",
+    "downloading": "ダウンロード中{{percent}}…",
+    "installed": "インストール済み。再起動中…"
+  },
+  "settings": {
+    "title": "設定",
+    "general": "一般",
+    "generalDescription": "起動時の動作とトレイ連携。",
+    "language": "言語",
+    "languageDescription": "UIの言語です。すべてのパネルに完全に適用するにはアプリを再起動してください。",
+    "autostart": "ログイン時に起動",
+    "autostartDescription": "Windowsへのログイン時にParlaを自動起動します。",
+    "closeToTray": "トレイに最小化",
+    "closeToTrayDescription": "メインウィンドウのXをクリックしてもParlaはバックグラウンド（システムトレイ）で動作し続けます。完全に終了するには、トレイアイコンを右クリックして「Quit Parla」を選択してください。",
+    "recording": "録音",
+    "recordingDescription": "音声入力中の録音動作。",
+    "soundFeedback": "サウンドフィードバック",
+    "soundFeedbackDescription": "録音の開始、停止、キャンセル時に短い音を鳴らし、画面を見なくても録音状態を確認できるようにします。",
+    "systemMute": "録音中にシステム音声をミュート",
+    "systemMuteDescription": "録音を開始すると、通知や動画の音が文字起こしに混入しないようスピーカーやヘッドホンを消音します。停止すると元のミュート状態に戻ります。",
+    "resumeDelay": "復元までの待機時間",
+    "resumeDelayDescription": "録音停止後、システム音声のミュート解除まで待つ時間です。ホットキーを離した操作で音が鳴るアプリに入力が伝わる場合に便利です。",
+    "recorderStyle": "レコーダーのスタイル",
+    "recorderStyleInfo": "「Mini」は画面下部にフローティングピルを表示します。「Notch」はMacBook Proのノッチのように画面上部から表示します。",
+    "recorderStyleDescription": "録音オーバーレイの位置。",
+    "recorderStyleMini": "Mini（画面下部のフローティングピル）",
+    "recorderStyleMiniCaption": "画面下部に表示するフローティングピル。",
+    "recorderStyleNotch": "Notch（上部固定）",
+    "recorderStyleNotchCaption": "画面上部から表示します。",
+    "appendTrailingSpace": "末尾に空白を追加",
+    "appendTrailingSpaceDescription": "貼り付けたテキストの後に空白を追加し、次の単語がつながらないようにします。",
+    "restoreClipboard": "貼り付け後にクリップボードを復元",
+    "restoreClipboardDescription": "音声入力の貼り付け後、以前のクリップボード内容（画像、テキスト、ファイル）を復元します。",
+    "textFormatting": "テキストの書式設定",
+    "textFormattingDescription": "文頭の大文字化、英字の大文字化、句読点を整えます。",
+    "removeFillers": "フィラー語を削除",
+    "fillerList": "フィラー語リスト（カンマ区切り）"
+  },
+  "onboarding": {
+    "welcome": {
+      "title": "Parlaへようこそ",
+      "subtitle": "Windows向けの音声入力。ローカルまたはクラウドで利用できます。",
+      "description": "Windows向けのローカルおよびクラウド音声入力です。マイク、OCR、キーボードショートカットをすばやく設定します。2分もかかりません。"
+    },
+    "permissions": {
+      "title": "マイクへのアクセス",
+      "description": "Parlaが音声を録音するにはマイクへのアクセスが必要です。Windowsのプライバシー設定で管理できます。",
+      "open": "プライバシー設定を開く"
+    },
+    "model": {
+      "title": "文字起こしモデルを選択",
+      "description": "Whisper Baseはおすすめの初期モデルです。後からAIモデルパネルで変更できます。",
+      "download": "Baseをダウンロード"
+    },
+    "hotkey": {
+      "title": "ホットキーを設定",
+      "description": "デフォルトはRight Altです。長押しで録音し、離すと停止します。短く押すとハンズフリーモードになります。"
+    },
+    "ready": {
+      "title": "準備完了です！",
+      "description": "ホットキーを押して音声入力を始めてください。テキストはカーソル位置に貼り付けられます。",
+      "start": "始める"
+    },
+    "step": {
+      "microphoneTitle": "マイク",
+      "microphoneDescription": "Parlaが音声入力を録音するにはマイクへのアクセスが必要です。デバイスが検出されない場合は、Windows設定 > プライバシー > マイクを開いてください。",
+      "microphoneAction": "Windows 設定",
+      "ocrTitle": "OCR Windows.Media.Ocr",
+      "ocrDescription": "アクティブなウィンドウの内容を分析し、LLMプロンプトを補強するために使用します。Windows設定 > 時刻と言語 > 言語で、OCR付きの言語パックをインストールしてください。",
+      "ocrAction": "Windowsの言語",
+      "autostartTitle": "自動起動",
+      "autostartDescription": "Windowsの起動時にParlaを起動し、常にホットキーを使えるようにします。",
+      "hotkeyTitle": "キーボードショートカット",
+      "hotkeyDescription": "Parlaは録音を開始するグローバルショートカットを監視します。デフォルトはRight Altです（モードに応じて長押しまたはダブルタップ）。設定で変更できます。",
+      "hotkeyStatus": "WH_KEYBOARD_LLフックが有効"
+    },
+    "skipEarly": "スキップ",
+    "skipLate": "後で",
+    "finish": "完了",
+    "continue": "続行"
+  },
+  "history": {
+    "title": "履歴",
+    "description": "過去の音声入力です。コピーアイコンをクリックしてテキストを取得したり、CSVをエクスポートして全履歴を保存したりできます。",
+    "descriptionFull": "文字起こしの記録（ローカルSQLite）。検索では元のテキストと拡張後のテキストを対象にします。",
+    "totalEntries": "合計{{count}}件。",
+    "empty": "履歴はまだありません。",
+    "emptyHint": "録音を開始すると、文字起こし結果がここに表示されます。",
+    "emptyLong": "文字起こし結果がありません。録音を開始してください。",
+    "exportCsv": "CSVをエクスポート",
+    "clearAll": "すべて消去",
+    "confirmClear": "履歴をすべて削除しますか？この操作は元に戻せません。",
+    "confirmDeleteCount": "{{count}}件の文字起こしを削除しますか？",
+    "retention": "保持期間",
+    "retentionSentenceA": "文字起こしを削除するまで",
+    "retentionSentenceB": "分（0の場合は即時削除）。",
+    "retentionSentenceC": "WAVファイルのみを削除するまで",
+    "retentionSentenceD": "日後。",
+    "retentionHelp": "一度に有効にできるモードは1つだけです（文字起こしの削除が音声のみの削除より優先されます）。起動時と24時間ごとに実行します。",
+    "search": "検索…",
+    "selectedCount": "{{count}}件を選択",
+    "deselect": "選択を解除",
+    "selectAll": "すべて選択",
+    "loadMore": "さらに読み込む",
+    "failed": "失敗",
+    "pending": "保留中...",
+    "emptyText": "(空)",
+    "rawText": "元のテキスト",
+    "enhancedText": "拡張後のテキスト",
+    "labelPrompt": "プロンプト",
+    "labelLlm": "LLM",
+    "labelEnhanceTime": "拡張時間",
+    "labelTranscribeTime": "文字起こし時間",
+    "labelPowerMode": "パワーモード",
+    "labelLanguage": "言語",
+    "columns": {
+      "date": "日付",
+      "source": "ソース",
+      "duration": "長さ",
+      "raw": "元のテキスト",
+      "enhanced": "拡張後"
+    },
+    "copy": "コピー",
+    "delete": "削除"
+  },
+  "sources": {
+    "local": "ローカル",
+    "cloud": "クラウド",
+    "parakeet": "Parakeet",
+    "localDescription": "Whisperモデルをコンピューター上で実行します。100%オフラインです。",
+    "cloudDescription": "高速な文字起こしを提供するクラウドプロバイダーです。APIキーが必要です。",
+    "parakeetDescription": "ONNX Runtime経由のNVIDIA Parakeet TDT。高速で多言語に対応します。"
+  },
+  "dictationLanguage": {
+    "title": "音声入力の言語",
+    "description": "アクティブなモデル（{{model}}）が使用する言語です。「自動検出」に切り替えると、録音時にモデルが言語を識別します。",
+    "auto": "自動検出"
+  },
+  "aiModels": {
+    "defaultModel": "デフォルトモデル",
+    "noModelSelected": "モデルが選択されていません",
+    "setAsDefault": "デフォルトに設定",
+    "configure": "設定",
+    "getApiKey": "APIキーを取得",
+    "removeApiKey": "削除 APIキー",
+    "filter": {
+      "recommended": "おすすめ",
+      "local": "ローカル",
+      "cloud": "クラウド"
+    },
+    "cloud": {
+      "apiKeyConfig": "APIキー設定",
+      "apiKeyPlaceholder": "入力 あなたの {{provider}} APIキー",
+      "verify": "検証",
+      "verifying": "検証中…",
+      "verifySuccess": "APIキー verified 正常に!",
+      "verifyFailed": "検証に失敗しました",
+      "streaming": "ストリーミング"
+    },
+    "import": {
+      "title": "ローカルモデルをインポート",
+      "description": "カスタムファインチューニング済みWhisperモデル（.bin GGMLファイル）を追加",
+      "browse": "参照",
+      "infoTip": "追加 カスタム fine-tuned whisper モデル 使用 付き Parla. 選択 downloaded.bin ファイル.",
+      "error": "インポート: {{message}}"
+    }
+  },
+  "whisperModels": {
+    "englishOnly": "EN",
+    "importedBadge": "インポート済み",
+    "installedBadge": "インストール済み",
+    "approxSize": "およそのサイズ：{{size}}",
+    "onDisk": "ディスク上：{{size}}",
+    "delete": "削除",
+    "download": "ダウンロード",
+    "cancel": "キャンセル",
+    "errorPrefix": "エラー: {{message}}",
+    "dialogTitle": "インポート Whisper モデル (.bin)",
+    "dialogFilter": "Whisper GGML モデル"
+  },
+  "parakeet": {
+    "executionProvider": "実行プロバイダー：",
+    "cpuHint": "高速化にはCargo機能cuda-onnx（NVIDIA）またはdirectml-onnx（Windows GPU）を有効にしてください。",
+    "multilingual": "多言語",
+    "englishOnly": "英語",
+    "download": "ダウンロード",
+    "cancel": "キャンセル",
+    "downloading": "ダウンロード中…",
+    "cancelled": "キャンセル済み",
+    "errorPrefix": "エラー: {{message}}",
+    "missingFiles": "不足しているファイル：{{files}}",
+    "confirmDelete": "Parakeetモデル{{id}}を削除しますか？"
+  },
+  "llmLocal": {
+    "title": "ローカル LLM (llama.cpp)",
+    "description": "GGUFモデルをローカルで実行します。拡張パネルでLLMプロバイダーに「llama.cpp（ローカル）」を選択し、下のモデルを使用してください。",
+    "cudaBuild": "CUDA対応でビルド",
+    "cpuBuildPrefix": "CPUビルド（Cargo機能",
+    "cpuBuildSuffix": "を有効にするとNVIDIA GPUを使用できます）。",
+    "gpuDetected": "GPUを検出：{{device}} - CUDA {{cuda}}",
+    "inferenceParams": "推論パラメーター",
+    "nGpuLayers": "GPUレイヤー数",
+    "nGpuLayersHelp": "0 = CPU、1000 = GPU上のすべて（CUDA有効時）",
+    "contextSize": "コンテキストサイズ",
+    "maxTokens": "最大出力トークン数",
+    "ggufModels": "GGUF モデル",
+    "importGguf": "インポート.gguf",
+    "imported": "インポート済み",
+    "active": "有効な",
+    "ctx": "コンテキスト{{count}}",
+    "choose": "選択",
+    "deactivate": "無効化",
+    "download": "ダウンロード",
+    "cancel": "キャンセル",
+    "downloading": "ダウンロード中…",
+    "cancelled": "キャンセル済み",
+    "errorPrefix": "エラー: {{message}}",
+    "confirmDelete": "モデル{{id}}を削除しますか？"
+  },
+  "enhancement": {
+    "title": "LLM 拡張",
+    "description": "文字起こし後、貼り付け前にLLMプロンプト（整理、言い換え）を適用します。有効なプロンプトのルールを適用します。",
+    "enableTitle": "拡張を有効化",
+    "enableDescription": "有効にすると、文字起こししたテキストを貼り付け前に選択したLLMへ送ります。",
+    "provider": "プロバイダー",
+    "selectPlaceholder": "- 選択 -",
+    "keyOk": "（キーは正常）",
+    "model": "モデル",
+    "endpoint": "エンドポイント:",
+    "ollamaBaseUrl": "OllamaベースURL",
+    "save": "保存",
+    "refreshModels": "モデルを更新",
+    "urlSaved": "URLを保存しました",
+    "modelsCount": "{{count}}個のモデル",
+    "loadingModels": "読み込み中…",
+    "errorPrefix": "エラー: {{message}}",
+    "localcliTemplate": "ローカル CLI テンプレート",
+    "localcliHelpA": "pi/claude/codexテンプレートでは、コマンドがパスに必要です。CLIは次を通じて起動します",
+    "localcliHelpB": "。公開される環境変数：",
+    "customCommandLabel": "カスタム PowerShell コマンド",
+    "saveCommand": "コマンドを保存",
+    "commandSaved": "コマンドを保存しました",
+    "timeoutLabel": "タイムアウト（秒）",
+    "saveTimeout": "タイムアウトを保存",
+    "timeoutSaved": "タイムアウトを保存しました",
+    "customBaseUrlLabel": "ベースURL（OpenAI互換）",
+    "saveUrl": "URLを保存",
+    "customBaseUrlHelp": "",
+    "customBaseUrlHelpEnd": "パスは自動的に追加されます。",
+    "customModelPlaceholder": "エンドポイントが想定する正確なモデル名",
+    "apiKeyLabel": "{{provider}} APIキー",
+    "apiKey": "APIキー",
+    "apiKeySavedPlaceholder": "（キーは保存済み）",
+    "configured": "設定済み",
+    "saveKey": "保存",
+    "saveKeyInProgress": "保存中…",
+    "keySavedOk": "OK、キーを保存しました",
+    "keyDeleted": "キーを削除しました",
+    "activePrompt": "有効なプロンプト",
+    "predefined": "（既定）"
+  },
+  "screenContext": {
+    "title": "アクティブウィンドウのコンテキスト（OCR）",
+    "description": "録音開始時に画面をキャプチャし、OCRを実行します。テキストをシステムプロンプトの下記の項目に挿入します。",
+    "descriptionEnd": "。Windows 10以降（Media.Ocr）が必要です。",
+    "testCapture": "キャプチャをテスト",
+    "clearCache": "キャッシュを消去",
+    "capturing": "キャプチャ中…",
+    "okStatus": "OK",
+    "cacheCleared": "キャッシュを消去しました",
+    "errorPrefix": "エラー: {{message}}"
+  },
+  "promptEditor": {
+    "title": "カスタムプロンプト",
+    "fromTemplate": "+ から テンプレート",
+    "newPrompt": "新しいプロンプト",
+    "newPromptTitle": "新しいプロンプト",
+    "editPromptTitle": "プロンプトを編集",
+    "predefined": "既定",
+    "predefinedDescription": "既定 プロンプト: edits allowed but restored if deleted.",
+    "customDescription": "カスタムプロンプトを文字起こしのLLM拡張に使用します。",
+    "title_field": "タイトル",
+    "description_field": "説明",
+    "injectWrapper": "Inject 文字起こし Enhancer テンプレート",
+    "injectWrapperHelp": "直接アシスタントモードでは、プロンプトをラッパーなしでそのまま使用するため、チェックを外します。",
+    "content": "プロンプトの内容",
+    "triggerWords": "トリガーワード（任意）",
+    "triggerWordsPlaceholder": "カンマ区切りの単語",
+    "triggerWordsHelp": "有効化 プロンプト 自動的に とき transcript contains 単語.",
+    "saved": "保存済み",
+    "errorPrefix": "エラー: {{message}}",
+    "duplicateSuffix": "（コピー）",
+    "confirmDelete": "プロンプト「{{name}}」を削除しますか？",
+    "editTooltip": "編集",
+    "duplicateTooltip": "複製",
+    "deleteTooltip": "削除",
+    "newPromptDefaultTitle": "新しいプロンプト"
+  },
+  "powerMode": {
+    "title": "パワーモード",
+    "description": "録音時に前面のアプリまたはURLに応じて、プロファイル（プロンプト + LLM + 文字起こしソース）を自動的に有効化します。",
+    "autoRestoreTitle": "録音後に状態を復元",
+    "autoRestoreDescription": "有効にすると、終了時にParlaが元の設定を再適用します。",
+    "configurations": "設定一覧",
+    "previewDetection": "検出プレビュー",
+    "newConfig": "新しい設定",
+    "previewWindow": "ウィンドウ：",
+    "previewUrl": "URL：",
+    "matchedConfig": "一致した設定：",
+    "noMatch": "なし",
+    "emptyList": "設定がありません。「新しい設定」をクリックして始めてください。",
+    "editTooltip": "編集",
+    "deleteTooltip": "削除",
+    "confirmDelete": "設定「{{name}}」を削除しますか？",
+    "promptAppName": "Exe名（.exeなし。例：chrome、code、notepad）",
+    "promptUrl": "URLまたは一部（例：github.com、docs.google.com/spreadsheets）",
+    "newConfigTitle": "新しい設定",
+    "editConfigTitle": "設定を編集",
+    "sheetDescription": "前面のアプリまたはURLに基づき、プロファイル（プロンプト + LLM + ソース）を自動的に有効化します。",
+    "defaultLabel": "デフォルト",
+    "enabledLabel": "有効",
+    "apps": "アプリ（exe）",
+    "urls": "URL",
+    "addTrigger": "追加",
+    "enhancementFieldset": "LLM 拡張",
+    "enableEnhancement": "拡張を有効化",
+    "screenContextPrefix": "アクティブウィンドウのコンテキスト（OCR）：",
+    "screenContextUnchanged": "変更なし",
+    "screenContextActive": "有効な",
+    "screenContextInactive": "無効",
+    "promptSelect": "有効なプロンプト",
+    "unchangedOption": "- 変更なし -",
+    "providerLlm": "LLM プロバイダー",
+    "modelLlm": "LLM モデル",
+    "sourceFieldset": "文字起こし ソース",
+    "type": "種類",
+    "typeLocal": "ローカル Whisper",
+    "typeParakeet": "Parakeet",
+    "typeCloud": "クラウド",
+    "whisperModelId": "Whisper モデル ID",
+    "parakeetModelId": "Parakeet モデル ID",
+    "cloudProvider": "クラウドプロバイダー",
+    "cloudModel": "クラウドモデル",
+    "language": "言語（Whisperコード：en、fr、空欄は自動）",
+    "languagePlaceholder": "空欄のまま = 変更なし",
+    "namePlaceholder": "名前",
+    "defaultName": "新しい設定",
+    "appsSingular": "アプリ",
+    "appsPlural": "アプリ",
+    "urlsSingular": "URL",
+    "urlsPlural": "URL",
+    "shortcutHint": "ショートカット：録音中にAltを押しながら番号キーを押すとプロファイルを切り替えます"
+  },
+  "recorder": {
+    "title": "レコーダー",
+    "description": "オーディオデバイス、ホットキー、表示スタイルを設定します。",
+    "recordingTitle": "音声録音",
+    "recordingDescription": "WASAPI 16 kHz mono Int16で録音。Right Altで起動（長押しはPTT、短押しはハンズフリーモード）",
+    "audioDevice": "オーディオデバイス",
+    "device": "デバイス",
+    "hotkey": "ホットキー",
+    "noDevice": "（検出されません）",
+    "defaultLabel": "(デフォルト)",
+    "refresh": "更新",
+    "stop": "停止",
+    "cancel": "キャンセル",
+    "record": "録音",
+    "recording": "録音中",
+    "hotkeyBadge": "ホットキー：{{action}}",
+    "lastRecording": "最後の録音",
+    "errorPrefix": "エラー: {{message}}",
+    "mode": {
+      "toggle": "切り替え",
+      "pushToTalk": "プッシュ・トゥ・トーク",
+      "hybrid": "ハイブリッド"
+    }
+  },
+  "transcribe": {
+    "title": "ローカル文字起こし",
+    "description": "録音を文字起こしするか、選択したモデルで音声ファイルを文字起こしします",
+    "parakeetDescription": "録音を文字起こしするか、選択したモデルで音声ファイルを文字起こしします",
+    "audioSource": "音声ソース",
+    "noAudio": "録音するか音声ファイルを選択",
+    "chooseAudio": "音声を選択",
+    "replaceAudio": "音声を置き換え",
+    "chooseAudioTitle": "音声ファイルを選択",
+    "audioFiles": "音声ファイル",
+    "useLatestRecording": "代わりに最新の録音を使用",
+    "activeModel": "有効なモデル",
+    "noSource": "ローカルソースが選択されていません",
+    "cloudUnavailable": "手動文字起こしではローカルソースのみ使用できます",
+    "modelUnavailable": "選択したモデルがダウンロードされていないか不完全です",
+    "language": "言語",
+    "auto": "自動検出",
+    "french": "フランス語",
+    "english": "英語",
+    "spanish": "スペイン語",
+    "german": "ドイツ語",
+    "italian": "イタリア語",
+    "portuguese": "ポルトガル語",
+    "dutch": "オランダ語",
+    "japanese": "日本語",
+    "chinese": "中国語",
+    "threads": "スレッド数",
+    "transcribe": "文字起こし",
+    "chooseOrRecord": "音声を録音するか、音声ファイルを選択してください",
+    "selectModel": "選択 モデル",
+    "completedIn": "{{seconds}}秒で完了",
+    "errorPrefix": "エラー: {{message}}"
+  },
+  "postProcessing": {
+    "title": "テキスト後処理",
+    "description": "カーソル位置への貼り付け前に文字起こし後のフィルターを適用します",
+    "formatParagraphs": "段落形式に整える",
+    "formatParagraphsDescription": "50語ごとに分割し、段落ごとに意味のある文を最大4文にします",
+    "removeFillers": "フィラー語を削除",
+    "removeFillersDescription": "下の一覧に基づき、uh、um、hmなどを削除します",
+    "appendSpace": "末尾に空白を追加",
+    "appendSpaceDescription": "貼り付けたテキストの後に空白を追加します（他の単語との連続入力に便利です）",
+    "restoreClipboard": "貼り付け後にクリップボードを復元",
+    "restoreClipboardDescription": "貼り付けの前後でテキストのクリップボードを保存・復元します",
+    "fillersLabel": "フィラー語（カンマ区切り）",
+    "save": "保存",
+    "fillersDefault": "VoiceInk デフォルト: uh, um, uhm, umm, uhh, uhhh, hmm, hm, mmm, mm, mh, ehh"
+  },
+  "dictionary": {
+    "title": "個人辞書",
+    "description": "文字起こし後に置換を適用します。変種はカンマ区切りです。空白のない文字体系（CJK、タイ語）では部分文字列検索に切り替えます。",
+    "originalPlaceholder": "元の語（CSV：docker、dockr）",
+    "replacementPlaceholder": "置換後の語",
+    "add": "追加",
+    "empty": "項目がありません。最初の置換語を追加して出力を統一してください。",
+    "bothRequired": "両方の項目が必要です",
+    "enable": "有効化",
+    "disable": "無効化",
+    "errorPrefix": "エラー: {{message}}"
+  },
+  "vad": {
+    "title": "Silero VAD",
+    "description": "音声区間検出。無音を無視し、音声区間のみを文字起こしします。VoiceInk（ggml-silero-v5.1.2）と同様です。",
+    "enableTitle": "VADを有効化",
+    "installed": "Sileroモデルはインストール済みです。切り替えて有効化または無効化してください。",
+    "downloadFirst": "有効化するには、まずモデルをダウンロードしてください。",
+    "modelInstalled": "VADモデルをインストール済み",
+    "size": "サイズ：{{size}}",
+    "delete": "削除",
+    "downloadingLabel": "ダウンロード: {{pct}}%",
+    "downloadButton": "ダウンロード ggml-silero-v5.1.2.bin (~2 MB)",
+    "errorPrefix": "エラー: {{message}}"
+  },
+  "permissions": {
+    "intro": "権限とシステム依存関係の現在の状態。",
+    "refresh": "更新",
+    "microphoneTitle": "マイク",
+    "microphoneDescription": "音声入力の録音に必要です。",
+    "microphoneAction": "Windows 設定",
+    "microphoneTip": "Parlaがマイクを検出しない場合は、Windows設定 > プライバシー > マイクを開き、デスクトップアプリのアクセスを許可してください。マイクの接続と音声入力での選択も確認してください。",
+    "ocrTitle": "OCR Windows.Media.Ocr",
+    "ocrDescription": "拡張処理のためにアクティブウィンドウのテキストを読み取ります。",
+    "ocrAction": "Windowsの言語",
+    "ocrTip": "OCRはアクティブなWindows言語パックを使用します。Windows設定 > 時刻と言語 > 言語で、必要な言語（フランス語、英語など）を追加し、「オプションのOCR言語パック」をダウンロードしてください。",
+    "autostartTitle": "自動起動",
+    "autostartDescription": "Windows起動時にParlaを起動します。",
+    "autostartActivate": "有効化",
+    "autostartDeactivate": "無効化",
+    "hotkeyTitle": "グローバルキーボードフック",
+    "hotkeyDescription": "Windowsのどこでもプッシュ・トゥ・トークのショートカットを取得します。",
+    "hotkeyTip": "Parlaは特別なWindows権限を必要としない低レベルのWH_KEYBOARD_LLフックをインストールします。デフォルトのショートカットはRight Altです。",
+    "audio": {
+      "detected_one": "{{count}}件の音声入力を検出",
+      "detected_other": "{{count}}件の音声入力を検出",
+      "none": "マイクが検出されません",
+      "hint": "マイクを接続するか、設定 > プライバシー > マイクを確認してください。"
+    },
+    "ocr": {
+      "available": "Windows.Media.Ocr 利用可能",
+      "unavailable": "OCRは利用できません",
+      "hint": "Windows設定 > 時刻と言語 > 言語でOCR言語パックを追加してください。"
+    },
+    "autostart": {
+      "enabled": "自動起動が有効",
+      "disabled": "自動起動が無効",
+      "unknown": "自動起動の状態は不明",
+      "disabledHint": "ParlaはWindowsとともに自動起動しません。"
+    },
+    "hotkey": {
+      "active": "キーボードフックが有効",
+      "hint": "デフォルトのトリガーはRight Altです。設定で変更できます。"
+    }
+  },
+  "miniRecorder": {
+    "transcribing": "文字起こし中",
+    "enhancing": "拡張中",
+    "promptActive": "有効なプロンプト",
+    "enhancementDisabled": "拡張は無効",
+    "enhancementLlm": "LLM 拡張",
+    "active": "有効な",
+    "off": "オフ",
+    "noPrompts": "プロンプトなし",
+    "powerMode": "パワーモード",
+    "noConfigs": "設定が定義されていません。プロファイルを作成すると、アクティブなアプリに基づいてParlaがプロンプト + LLM + ソースを自動的に切り替えます。",
+    "openPowerMode": "パワーモードを開く",
+    "autoSwitch": "現在のアプリに基づいて自動的に切り替えます。Alt+番号でプロファイルを手動選択できます。"
+  },
+  "modelCatalog": {
+    "imported": {
+      "name": "{{name}}",
+      "notes": "{{name}}"
+    },
+    "whisper": {
+      "ggml-tiny": {
+        "name": "Whisper Tiny",
+        "notes": "小型の多言語Whisperモデル。"
+      },
+      "ggml-tiny_en": {
+        "name": "Whisper Tiny (英語)",
+        "notes": "英語専用のWhisperモデル。"
+      },
+      "ggml-base": {
+        "name": "Whisper Base",
+        "notes": "CPU文字起こし向けのバランスのよい多言語モデル。"
+      },
+      "ggml-base_en": {
+        "name": "Whisper Base (英語)",
+        "notes": "英語専用で、英語の精度を高めたモデル。"
+      },
+      "ggml-large-v2": {
+        "name": "Whisper Large v2",
+        "notes": "高精度の多言語モデル。大容量のRAMが必要です。"
+      },
+      "ggml-large-v3": {
+        "name": "Whisper Large v3",
+        "notes": "最新の高精度多言語CPUモデル。"
+      },
+      "ggml-large-v3-turbo": {
+        "name": "Whisper Large v3 Turbo",
+        "notes": "高速なLarge v3モデル。CUDAでの使用を推奨します。"
+      },
+      "ggml-large-v3-turbo-q5_0": {
+        "name": "Whisper Large v3 Turbo (Q5_0)",
+        "notes": "品質とサイズのバランスに優れた量子化モデルです。"
+      }
+    },
+    "parakeet": {
+      "parakeet-tdt-0_6b-v2": {
+        "name": "Parakeet TDT 0.6B v2 (EN, F16)",
+        "notes": "リファレンス モデル. 英語 のみ. ~2.5 GB ダウンロード."
+      },
+      "parakeet-tdt-0_6b-v2-int8": {
+        "name": "Parakeet TDT 0.6B v2 (EN, int8)",
+        "notes": "量子化 int8 バリアント. ~680 MB. 英語 のみ."
+      },
+      "parakeet-tdt-0_6b-v3": {
+        "name": "Parakeet TDT 0.6B v3 (多言語, F16)",
+        "notes": "多言語モデル（英語とヨーロッパの25言語）。約2.5 GBのダウンロード。"
+      },
+      "parakeet-tdt-0_6b-v3-int8": {
+        "name": "Parakeet TDT 0.6B v3 (多言語, int8)",
+        "notes": "量子化 多言語 バリアント. ~680 MB."
+      }
+    },
+    "gguf": {
+      "qwen2_5-3b-instruct-q4": {
+        "name": "Qwen 2.5 3B Instruct",
+        "notes": "コンパクトな 指示 モデル 用 ローカル enhancement."
+      },
+      "llama-3_2-3b-instruct-q4": {
+        "name": "Llama 3.2 3B Instruct",
+        "notes": "コンパクトな Llama 指示 モデル 用 ローカル enhancement."
+      },
+      "gemma-2-2b-it-q4": {
+        "name": "Gemma 2 2B IT",
+        "notes": "コンパクトな 指示 モデル 用 ローカル enhancement."
+      },
+      "phi-3_5-mini-instruct-q4": {
+        "name": "Phi 3.5 Mini Instruct",
+        "notes": "コンパクトな 指示 モデル 用 ローカル enhancement."
+      }
+    },
+    "cloud": {
+      "groq_whisper-large-v3-turbo": {
+        "name": "Whisper Large v3 Turbo",
+        "notes": "高速 クラウド 文字起こし."
+      },
+      "elevenlabs_scribe_v1": {
+        "name": "Scribe v1",
+        "notes": "ElevenLabs speech--テキスト モデル."
+      },
+      "elevenlabs_scribe_v2": {
+        "name": "Scribe v2",
+        "notes": "ElevenLabs speech--テキスト モデル."
+      },
+      "deepgram_nova-3": {
+        "name": "Nova-3",
+        "notes": "一般-purpose クラウド 文字起こし."
+      },
+      "deepgram_nova-3-medical": {
+        "name": "Nova-3 医療用",
+        "notes": "医療用 クラウド 文字起こし."
+      },
+      "mistral_voxtral-mini-latest": {
+        "name": "Voxtral Mini",
+        "notes": "Mistral クラウド 文字起こし モデル."
+      },
+      "mistral_voxtral-mini-transcribe-realtime-2602": {
+        "name": "Voxtral Mini リアルタイム",
+        "notes": "Mistral リアルタイム 文字起こし モデル."
+      },
+      "soniox_stt-async-v4": {
+        "name": "STT Async v4",
+        "notes": "非同期 クラウド 文字起こし."
+      },
+      "soniox_stt-rt-v4": {
+        "name": "STT リアルタイム v4",
+        "notes": "リアルタイム クラウド 文字起こし."
+      },
+      "speechmatics_speechmatics-enhanced": {
+        "name": "Speechmatics 強化された",
+        "notes": "拡張後 クラウド 文字起こし."
+      },
+      "gemini_gemini-2_5-pro": {
+        "name": "Gemini 2.5 Pro",
+        "notes": "Google クラウド 文字起こし モデル."
+      },
+      "gemini_gemini-2_5-flash": {
+        "name": "Gemini 2.5 Flash",
+        "notes": "高速 Google クラウド 文字起こし モデル."
+      },
+      "xai_grok-stt": {
+        "name": "Grok STT",
+        "notes": "xAI クラウド 文字起こし モデル."
+      },
+      "cartesia_ink-whisper": {
+        "name": "Ink Whisper",
+        "notes": "Cartesia クラウド 文字起こし モデル."
+      },
+      "assemblyai_universal-3-pro": {
+        "name": "Universal-3 Pro",
+        "notes": "AssemblyAI クラウド 文字起こし モデル."
+      },
+      "assemblyai_universal-streaming": {
+        "name": "Universal Streaming",
+        "notes": "AssemblyAI リアルタイム 文字起こし モデル."
+      }
+    }
+  },
+  "proxy": {
+    "title": "アプリケーションプロキシ",
+    "description": "Parlaの送信HTTP(S)通信の経路を選択します。オフでは直接接続、オンでURLが空欄ならWPADや統合認証を含むシステムプロキシ、URLを入力すると明示的なプロキシを使用します。",
+    "loading": "アプリケーションプロキシ設定を読み込み中…",
+    "enable": "アプリケーションプロキシを有効化",
+    "enableHelp": "オフ：直接接続。オン：URLが空欄ならシステム設定、入力すると明示的なプロキシを使用します。",
+    "url": "アプリケーションプロキシ URL",
+    "urlPlaceholder": "https://proxy.example:8080",
+    "urlHelp": "システムプロキシ設定を使う場合は空欄にします。WPADと統合認証を含みます。明示的なプロキシにはhttp、https、socks5のURLを入力します。",
+    "noProxy": "プロキシ除外項目",
+    "noProxyPlaceholder": "localhost, 127.0.0.1,.example.com, 10.0.0.0/8",
+    "noProxyHelp": "NO_PROXY互換パターンをカンマ区切りで入力します。一致する接続先はアプリケーションプロキシを迂回します。システムモードではWindows設定が迂回動作を制御します。",
+    "credentials": "アプリケーションプロキシの認証情報",
+    "credentialsSavedState": "認証情報はオペレーティングシステムの資格情報ボールトに保存されています。",
+    "noCredentials": "保存された認証情報はありません。",
+    "removeCredentials": "認証情報を削除",
+    "username": "ユーザー名",
+    "password": "パスワード",
+    "saveCredentials": "認証情報を保存",
+    "saving": "保存中…",
+    "saveSettings": "アプリケーションプロキシ設定を保存",
+    "loadError": "アプリケーションプロキシ設定を読み込めませんでした。",
+    "invalidScheme": "アプリケーションプロキシのURLはhttp、https、socks5のいずれかを使用してください。",
+    "invalidUrl": "有効なアプリケーションプロキシのURLを入力してください。",
+    "credentialsInFields": "アプリケーションプロキシの認証情報はURLではなく認証情報項目に入力してください。",
+    "settingsSaved": "アプリケーションプロキシ設定を保存しました。",
+    "settingsSaveError": "アプリケーションプロキシ設定を保存できませんでした。",
+    "credentialsRequired": "認証情報を保存するにはユーザー名とパスワードの両方を入力してください。",
+    "credentialsSaved": "アプリケーションプロキシの認証情報を安全に保存しました。",
+    "credentialsSaveError": "アプリケーションプロキシの認証情報を保存できませんでした。",
+    "credentialsRemoved": "アプリケーションプロキシの認証情報を削除しました。",
+    "credentialsRemoveError": "アプリケーションプロキシの認証情報を削除できませんでした。"
+  },
+  "promptDetection": {
+    "triggerDetected": "トリガーワードを検出：{{word}}",
+    "promptOverride": "プロンプトを次に変更：{{prompt}}"
+  },
+  "errors": {
+    "timeout": "リクエストがタイムアウトしました。ネットワーク接続を確認してください。",
+    "networkError": "ネットワークエラーです。接続を確認してください。",
+    "apiKeyMissing": "{{provider}}のAPIキーがありません。",
+    "modelNotDownloaded": "モデル{{model}}はまだダウンロードされていません。",
+    "generic": "エラーが発生しました：{{message}}",
+    "noWhisper": "Whisperモデルが選択されていません。AIモデルを開いて選択してください。",
+    "noParakeet": "Parakeetモデルが選択されていません。AIモデルを開いて選択してください。",
+    "parakeetIncomplete": "Parakeetモデル{{model}}は不完全です。AIモデルから再ダウンロードしてください。",
+    "cloudUnconfigured": "クラウドプロバイダーまたはモデルが選択されていません。AIモデルを開いて設定してください。"
+  },
+  "prompts": {
+    "default": {
+      "title": "デフォルト",
+      "description": "文字起こしの文法、フィラー、書式を整えます。"
+    },
+    "assistant": {
+      "title": "アシスタント",
+      "description": "アシスタントモード：マークダウンなしで直接回答します。"
+    }
+  },
+  "hotkey": {
+    "cardTitle": "録音ショートカット",
+    "cardDescription": "音声入力を有効にするキーまたは組み合わせを選択します。デフォルトはRight Altです。",
+    "primary": "メイン",
+    "secondary": "サブ",
+    "addSecondary": "2つ目のショートカットを追加",
+    "removeSecondary": "2つ目のショートカットを削除",
+    "resetDefaults": "デフォルトに戻す",
+    "altGrTip": "AZERTY/QWERTZキーボードでは、@、#、{、[などの入力時にAltGrが仮想Right Altイベントを生成します。Parlaはこれらを自動的に検出して無視します。",
+    "options": {
+      "none": "なし（無効）",
+      "rightAlt": "右Alt",
+      "leftAlt": "左Alt",
+      "rightCtrl": "右Ctrl",
+      "leftCtrl": "左Ctrl",
+      "rightWin": "右Win",
+      "rightShift": "右Shift",
+      "leftShift": "左Shift",
+      "custom": "カスタム組み合わせ…"
+    },
+    "modes": {
+      "toggle": "切り替え",
+      "pushToTalk": "プッシュ・トゥ・トーク",
+      "hybrid": "ハイブリッド"
+    },
+    "modeHints": {
+      "toggle": "押すと開始し、もう一度押すと停止します。ハンズフリー音声入力です。",
+      "pushToTalk": "長押しで録音し、離すと停止します。",
+      "hybrid": "短押し（500ms未満）でハンズフリーセッションを開始し、長押し（500ms超）でプッシュ・トゥ・トークになります。"
+    },
+    "record": {
+      "title": "カスタム組み合わせを録音",
+      "hint": "使用するキーを押してください。修飾キー1つと最後のキーが必要です（例：Ctrl + Alt + R、F13、Win + Space）。Escでキャンセルします。",
+      "waiting": "組み合わせを押してください…",
+      "needsModifier": "単独キーはF1〜F24、Insert、Delete、Home、End、PageUp/Down、Pause、PrintScreenのみ使用できます。それ以外ではCtrl、Alt、Shift、Winのいずれかを追加してください。"
+    },
+    "editCombo": "クリックして組み合わせを変更"
+  }
+}

@@ -629,6 +629,8 @@
     }
   },
   "miniRecorder": {
+    "transcribing": "Transcribing",
+    "enhancing": "Enhancing",
     "promptActive": "Active prompt",
     "enhancementDisabled": "Enhancement disabled",
     "enhancementLlm": "LLM Enhancement",
@@ -639,6 +641,181 @@
     "noConfigs": "No config defined. Create a profile so Parla automatically switches prompt + LLM + source based on the active app.",
     "openPowerMode": "Open Power Mode",
     "autoSwitch": "Switches automatically based on the current app. Alt+number picks a profile manually."
+  },
+  "modelCatalog": {
+    "imported": {
+      "name": "{{name}}",
+      "notes": "{{name}}"
+    },
+    "whisper": {
+      "ggml-tiny": {
+        "name": "Whisper Tiny",
+        "notes": "Small multilingual Whisper model."
+      },
+      "ggml-tiny_en": {
+        "name": "Whisper Tiny (English)",
+        "notes": "English-only Whisper model."
+      },
+      "ggml-base": {
+        "name": "Whisper Base",
+        "notes": "Balanced multilingual model for CPU transcription."
+      },
+      "ggml-base_en": {
+        "name": "Whisper Base (English)",
+        "notes": "English-only model with improved English accuracy."
+      },
+      "ggml-large-v2": {
+        "name": "Whisper Large v2",
+        "notes": "High-accuracy multilingual model; requires substantial RAM."
+      },
+      "ggml-large-v3": {
+        "name": "Whisper Large v3",
+        "notes": "Latest high-accuracy multilingual CPU model."
+      },
+      "ggml-large-v3-turbo": {
+        "name": "Whisper Large v3 Turbo",
+        "notes": "Faster Large v3 model, recommended with CUDA."
+      },
+      "ggml-large-v3-turbo-q5_0": {
+        "name": "Whisper Large v3 Turbo (Q5_0)",
+        "notes": "Quantized model with a strong quality-to-size ratio."
+      }
+    },
+    "parakeet": {
+      "parakeet-tdt-0_6b-v2": {
+        "name": "Parakeet TDT 0.6B v2 (EN, F16)",
+        "notes": "Reference model. English only. ~2.5 GB download."
+      },
+      "parakeet-tdt-0_6b-v2-int8": {
+        "name": "Parakeet TDT 0.6B v2 (EN, int8)",
+        "notes": "Quantized int8 variant. ~680 MB. English only."
+      },
+      "parakeet-tdt-0_6b-v3": {
+        "name": "Parakeet TDT 0.6B v3 (multilingual, F16)",
+        "notes": "Multilingual model (English + 25 European languages). ~2.5 GB."
+      },
+      "parakeet-tdt-0_6b-v3-int8": {
+        "name": "Parakeet TDT 0.6B v3 (multilingual, int8)",
+        "notes": "Quantized multilingual variant. ~680 MB."
+      }
+    },
+    "gguf": {
+      "qwen2_5-3b-instruct-q4": {
+        "name": "Qwen 2.5 3B Instruct",
+        "notes": "Compact instruction model for local enhancement."
+      },
+      "llama-3_2-3b-instruct-q4": {
+        "name": "Llama 3.2 3B Instruct",
+        "notes": "Compact Llama instruction model for local enhancement."
+      },
+      "gemma-2-2b-it-q4": {
+        "name": "Gemma 2 2B IT",
+        "notes": "Compact instruction model for local enhancement."
+      },
+      "phi-3_5-mini-instruct-q4": {
+        "name": "Phi 3.5 Mini Instruct",
+        "notes": "Compact instruction model for local enhancement."
+      }
+    },
+    "cloud": {
+      "groq_whisper-large-v3-turbo": {
+        "name": "Whisper Large v3 Turbo",
+        "notes": "Fast cloud transcription."
+      },
+      "elevenlabs_scribe_v1": {
+        "name": "Scribe v1",
+        "notes": "ElevenLabs speech-to-text model."
+      },
+      "elevenlabs_scribe_v2": {
+        "name": "Scribe v2",
+        "notes": "ElevenLabs speech-to-text model."
+      },
+      "deepgram_nova-3": {
+        "name": "Nova-3",
+        "notes": "General-purpose cloud transcription."
+      },
+      "deepgram_nova-3-medical": {
+        "name": "Nova-3 Medical",
+        "notes": "Medical cloud transcription."
+      },
+      "mistral_voxtral-mini-latest": {
+        "name": "Voxtral Mini",
+        "notes": "Mistral cloud transcription model."
+      },
+      "mistral_voxtral-mini-transcribe-realtime-2602": {
+        "name": "Voxtral Mini Realtime",
+        "notes": "Mistral realtime transcription model."
+      },
+      "soniox_stt-async-v4": {
+        "name": "STT Async v4",
+        "notes": "Asynchronous cloud transcription."
+      },
+      "soniox_stt-rt-v4": {
+        "name": "STT Realtime v4",
+        "notes": "Realtime cloud transcription."
+      },
+      "speechmatics_speechmatics-enhanced": {
+        "name": "Speechmatics Enhanced",
+        "notes": "Enhanced cloud transcription."
+      },
+      "gemini_gemini-2_5-pro": {
+        "name": "Gemini 2.5 Pro",
+        "notes": "Google cloud transcription model."
+      },
+      "gemini_gemini-2_5-flash": {
+        "name": "Gemini 2.5 Flash",
+        "notes": "Fast Google cloud transcription model."
+      },
+      "xai_grok-stt": {
+        "name": "Grok STT",
+        "notes": "xAI cloud transcription model."
+      },
+      "cartesia_ink-whisper": {
+        "name": "Ink Whisper",
+        "notes": "Cartesia cloud transcription model."
+      },
+      "assemblyai_universal-3-pro": {
+        "name": "Universal-3 Pro",
+        "notes": "AssemblyAI cloud transcription model."
+      },
+      "assemblyai_universal-streaming": {
+        "name": "Universal Streaming",
+        "notes": "AssemblyAI realtime transcription model."
+      }
+    }
+  },
+  "proxy": {
+    "title": "Application Proxy",
+    "description": "Choose how Parla routes outbound HTTP(S) traffic: turn this off for Direct connections; turn it on with no URL for System proxy settings, including WPAD and integrated authentication; or enter a URL for an Explicit proxy.",
+    "loading": "Loading Application Proxy settings…",
+    "enable": "Enable Application Proxy",
+    "enableHelp": "Off: Direct connections. On: use System settings when URL is blank, or an Explicit proxy when URL is entered.",
+    "url": "Application Proxy URL",
+    "urlPlaceholder": "https://proxy.example:8080",
+    "urlHelp": "Leave blank for System proxy settings, including WPAD and integrated authentication. Enter an http, https, or socks5 URL for an Explicit proxy.",
+    "noProxy": "No-Proxy Entries",
+    "noProxyPlaceholder": "localhost, 127.0.0.1, .example.com, 10.0.0.0/8",
+    "noProxyHelp": "Comma-separated NO_PROXY-compatible patterns. Matching destinations bypass Application Proxy; in System mode, Windows settings control bypass behavior.",
+    "credentials": "Application Proxy credentials",
+    "credentialsSavedState": "Credentials saved in the operating-system credential vault.",
+    "noCredentials": "No credentials saved.",
+    "removeCredentials": "Remove credentials",
+    "username": "Username",
+    "password": "Password",
+    "saveCredentials": "Save credentials",
+    "saving": "Saving…",
+    "saveSettings": "Save Application Proxy settings",
+    "loadError": "Could not load Application Proxy settings.",
+    "invalidScheme": "Application Proxy URL must use http, https, or socks5.",
+    "invalidUrl": "Enter a valid Application Proxy URL.",
+    "credentialsInFields": "Enter Application Proxy credentials in credential fields, not in URL.",
+    "settingsSaved": "Application Proxy settings saved.",
+    "settingsSaveError": "Could not save Application Proxy settings.",
+    "credentialsRequired": "Enter both username and password to save credentials.",
+    "credentialsSaved": "Application Proxy credentials saved securely.",
+    "credentialsSaveError": "Could not save Application Proxy credentials.",
+    "credentialsRemoved": "Application Proxy credentials removed.",
+    "credentialsRemoveError": "Could not remove Application Proxy credentials."
   },
   "promptDetection": {
     "triggerDetected": "Trigger word detected: {{word}}",

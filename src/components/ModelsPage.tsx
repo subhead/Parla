@@ -18,6 +18,7 @@ import { ImportModelCard } from "@/components/models/ImportModelCard";
 import { ModelFilterPills } from "@/components/models/ModelFilterPills";
 import { ParakeetModelCard } from "@/components/models/ParakeetModelCard";
 import { WhisperModelCard } from "@/components/models/WhisperModelCard";
+import { localizeModel } from "@/components/models/localizeModel";
 import {
   isRowCurrent,
   RECOMMENDED_MODELS,
@@ -358,9 +359,14 @@ export function ModelsPage({
     [providers],
   );
 
-  const defaultDisplayName = useMemo(
-    () => resolveDefaultDisplayName(source, whisper, parakeet, cloudModels),
-    [source, whisper, parakeet, cloudModels],
+  const defaultDisplayName = useMemo(() => {
+    const raw = resolveDefaultDisplayName(source, whisper, parakeet, cloudModels);
+    if (!raw || !source) return raw;
+    if (source.kind === "local") { const m = whisper.find((x) => x.id === source.whisper_model_id); return m ? localizeModel(t, "whisper", m.id, m.display_name, m.notes, m.imported).displayName : raw; }
+    if (source.kind === "parakeet") { const m = parakeet.find((x) => x.id === source.parakeet_model_id); return m ? localizeModel(t, "parakeet", m.id, m.display_name, m.notes).displayName : raw; }
+    const m = cloudModels.find((x) => x.provider_id === source.cloud_provider && x.model_id === source.cloud_model);
+    return m ? localizeModel(t, "cloud", `${m.provider_id}_${m.model_id}`, m.display_name, m.notes).displayName : raw;
+  }, [source, whisper, parakeet, cloudModels, t],
   );
 
   const showCpuHint = ep === "cpu" && rows.some((r) => r.type === "parakeet");

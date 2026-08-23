@@ -300,6 +300,7 @@ export function SettingsPanel() {
 }
 
 export function ApplicationProxyCard() {
+  const { t } = useTranslation();
   const [proxy, setProxy] = useState({ enabled: false, url: "", noProxyEntries: "" });
   const [proxyCredentials, setProxyCredentials] = useState({ username: "", password: "" });
   const [hasProxyCredentials, setHasProxyCredentials] = useState(false);
@@ -315,7 +316,7 @@ export function ApplicationProxyCard() {
         setProxy({ enabled: settings.enabled, url: settings.url ?? "", noProxyEntries: settings.no_proxy_entries.join(", ") });
         setHasProxyCredentials(credentials);
       })
-      .catch(() => setProxyError("Could not load Application Proxy settings."))
+      .catch(() => setProxyError(t("proxy.loadError")))
       .finally(() => setProxyLoading(false));
   }, []);
 
@@ -324,11 +325,11 @@ export function ApplicationProxyCard() {
     if (!proxy.enabled || url.length === 0) return null;
     try {
       const parsed = new URL(url);
-      if (!["http:", "https:", "socks5:"].includes(parsed.protocol)) return "Application Proxy URL must use http, https, or socks5.";
-      if (!parsed.hostname) return "Enter a valid Application Proxy URL.";
-      if (parsed.username || parsed.password) return "Enter Application Proxy credentials in credential fields, not in URL.";
+      if (!["http:", "https:", "socks5:"].includes(parsed.protocol)) return t("proxy.invalidScheme");
+      if (!parsed.hostname) return t("proxy.invalidUrl");
+      if (parsed.username || parsed.password) return t("proxy.credentialsInFields");
     } catch {
-      return "Enter a valid Application Proxy URL.";
+      return t("proxy.invalidUrl");
     }
     return null;
   }
@@ -346,22 +347,22 @@ export function ApplicationProxyCard() {
     try {
       await api.setProxySettings({ enabled: proxy.enabled, url: proxy.url.trim() || null, no_proxy_entries: normalizedNoProxyEntries() });
       setProxy({ ...proxy, noProxyEntries: normalizedNoProxyEntries().join(", ") });
-      setProxyNotice("Application Proxy settings saved.");
-    } catch { setProxyError("Could not save Application Proxy settings."); }
+      setProxyNotice(t("proxy.settingsSaved"));
+    } catch { setProxyError(t("proxy.settingsSaveError")); }
     finally { setProxySaving(false); }
   }
 
   async function saveProxyCredentials() {
     setProxyError(null);
     setProxyNotice(null);
-    if (!proxyCredentials.username.trim() || !proxyCredentials.password) { setProxyError("Enter both username and password to save credentials."); return; }
+    if (!proxyCredentials.username.trim() || !proxyCredentials.password) { setProxyError(t("proxy.credentialsRequired")); return; }
     setCredentialsSaving(true);
     try {
       await api.setProxyCredentials({ username: proxyCredentials.username.trim(), password: proxyCredentials.password });
       setProxyCredentials({ username: "", password: "" });
       setHasProxyCredentials(true);
-      setProxyNotice("Application Proxy credentials saved securely.");
-    } catch { setProxyError("Could not save Application Proxy credentials."); }
+      setProxyNotice(t("proxy.credentialsSaved"));
+    } catch { setProxyError(t("proxy.credentialsSaveError")); }
     finally { setCredentialsSaving(false); }
   }
 
@@ -371,27 +372,27 @@ export function ApplicationProxyCard() {
     try {
       await api.deleteProxyCredentials();
       setHasProxyCredentials(false);
-      setProxyNotice("Application Proxy credentials removed.");
-    } catch { setProxyError("Could not remove Application Proxy credentials."); }
+      setProxyNotice(t("proxy.credentialsRemoved"));
+    } catch { setProxyError(t("proxy.credentialsRemoveError")); }
   }
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-base">Application Proxy</CardTitle>
+        <CardTitle className="text-base">{t("proxy.title")}</CardTitle>
         <CardDescription>
-          Choose how Parla routes outbound HTTP(S) traffic: turn this off for Direct connections; turn it on with no URL for System proxy settings, including WPAD and integrated authentication; or enter a URL for an Explicit proxy.
+          {t("proxy.description")}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        {proxyLoading ? <p className="text-sm text-muted-foreground">Loading Application Proxy settings…</p> : (
+        {proxyLoading ? <p className="text-sm text-muted-foreground">{t("proxy.loading")}</p> : (
           <>
-            <label className="flex items-center justify-between rounded-md border p-3"><div><p className="text-sm font-medium">Enable Application Proxy</p><p className="text-xs text-muted-foreground">Off: Direct connections. On: use System settings when URL is blank, or an Explicit proxy when URL is entered.</p></div><input type="checkbox" checked={proxy.enabled} onChange={(event) => setProxy({ ...proxy, enabled: event.target.checked })} className="h-5 w-5" /></label>
-            <div className={cn("space-y-1", !proxy.enabled && "opacity-60")}><label htmlFor="application-proxy-url" className="text-sm font-medium">Application Proxy URL</label><input id="application-proxy-url" type="url" value={proxy.url} onChange={(event) => setProxy({ ...proxy, url: event.target.value })} placeholder="https://proxy.example:8080" disabled={!proxy.enabled} className="h-9 w-full rounded-md border border-input bg-background px-3 text-sm" /><p className="text-xs text-muted-foreground">Leave blank for System proxy settings, including WPAD and integrated authentication. Enter an http, https, or socks5 URL for an Explicit proxy.</p></div>
-            <div className={cn("space-y-1", !proxy.enabled && "opacity-60")}><label htmlFor="no-proxy-entries" className="text-sm font-medium">No-Proxy Entries</label><textarea id="no-proxy-entries" value={proxy.noProxyEntries} onChange={(event) => setProxy({ ...proxy, noProxyEntries: event.target.value })} placeholder="localhost, 127.0.0.1, .example.com, 10.0.0.0/8" disabled={!proxy.enabled} rows={3} className="w-full resize-y rounded-md border border-input bg-background px-3 py-2 text-sm" /><p className="text-xs text-muted-foreground">Comma-separated NO_PROXY-compatible patterns. Matching destinations bypass Application Proxy; in System mode, Windows settings control bypass behavior.</p></div>
-            <div className="rounded-md border p-3"><div className="flex flex-wrap items-start justify-between gap-3"><div><p className="text-sm font-medium">Application Proxy credentials</p><p className="text-xs text-muted-foreground">{hasProxyCredentials ? "Credentials saved in the operating-system credential vault." : "No credentials saved."}</p></div>{hasProxyCredentials && <Button type="button" variant="outline" size="sm" onClick={removeProxyCredentials}>Remove credentials</Button>}</div><div className="mt-3 grid gap-2 sm:grid-cols-2"><input aria-label="Application Proxy username" value={proxyCredentials.username} onChange={(event) => setProxyCredentials({ ...proxyCredentials, username: event.target.value })} placeholder="Username" autoComplete="username" className="h-9 rounded-md border border-input bg-background px-3 text-sm" /><input aria-label="Application Proxy password" type="password" value={proxyCredentials.password} onChange={(event) => setProxyCredentials({ ...proxyCredentials, password: event.target.value })} placeholder="Password" autoComplete="new-password" className="h-9 rounded-md border border-input bg-background px-3 text-sm" /></div><Button type="button" variant="outline" size="sm" className="mt-3" onClick={saveProxyCredentials} disabled={credentialsSaving}>{credentialsSaving ? "Saving…" : "Save credentials"}</Button></div>
+            <label className="flex items-center justify-between rounded-md border p-3"><div><p className="text-sm font-medium">{t("proxy.enable")}</p><p className="text-xs text-muted-foreground">{t("proxy.enableHelp")}</p></div><input type="checkbox" checked={proxy.enabled} onChange={(event) => setProxy({ ...proxy, enabled: event.target.checked })} className="h-5 w-5" /></label>
+            <div className={cn("space-y-1", !proxy.enabled && "opacity-60")}><label htmlFor="application-proxy-url" className="text-sm font-medium">{t("proxy.url")}</label><input id="application-proxy-url" type="url" value={proxy.url} onChange={(event) => setProxy({ ...proxy, url: event.target.value })} placeholder={t("proxy.urlPlaceholder")} disabled={!proxy.enabled} className="h-9 w-full rounded-md border border-input bg-background px-3 text-sm" /><p className="text-xs text-muted-foreground">{t("proxy.urlHelp")}</p></div>
+            <div className={cn("space-y-1", !proxy.enabled && "opacity-60")}><label htmlFor="no-proxy-entries" className="text-sm font-medium">{t("proxy.noProxy")}</label><textarea id="no-proxy-entries" value={proxy.noProxyEntries} onChange={(event) => setProxy({ ...proxy, noProxyEntries: event.target.value })} placeholder={t("proxy.noProxyPlaceholder")} disabled={!proxy.enabled} rows={3} className="w-full resize-y rounded-md border border-input bg-background px-3 py-2 text-sm" /><p className="text-xs text-muted-foreground">{t("proxy.noProxyHelp")}</p></div>
+            <div className="rounded-md border p-3"><div className="flex flex-wrap items-start justify-between gap-3"><div><p className="text-sm font-medium">{t("proxy.credentials")}</p><p className="text-xs text-muted-foreground">{hasProxyCredentials ? t("proxy.credentialsSavedState") : t("proxy.noCredentials")}</p></div>{hasProxyCredentials && <Button type="button" variant="outline" size="sm" onClick={removeProxyCredentials}>{t("proxy.removeCredentials")}</Button>}</div><div className="mt-3 grid gap-2 sm:grid-cols-2"><input aria-label={t("proxy.username")} value={proxyCredentials.username} onChange={(event) => setProxyCredentials({ ...proxyCredentials, username: event.target.value })} placeholder={t("proxy.username")} autoComplete="username" className="h-9 rounded-md border border-input bg-background px-3 text-sm" /><input aria-label={t("proxy.password")} type="password" value={proxyCredentials.password} onChange={(event) => setProxyCredentials({ ...proxyCredentials, password: event.target.value })} placeholder={t("proxy.password")} autoComplete="new-password" className="h-9 rounded-md border border-input bg-background px-3 text-sm" /></div><Button type="button" variant="outline" size="sm" className="mt-3" onClick={saveProxyCredentials} disabled={credentialsSaving}>{credentialsSaving ? t("proxy.saving") : t("proxy.saveCredentials")}</Button></div>
             {(proxyError || proxyNotice) && <p role="status" className={cn("text-sm", proxyError ? "text-destructive" : "text-muted-foreground")}>{proxyError ?? proxyNotice}</p>}
-            <Button type="button" onClick={saveProxy} disabled={proxySaving}>{proxySaving ? "Saving…" : "Save Application Proxy settings"}</Button>
+            <Button type="button" onClick={saveProxy} disabled={proxySaving}>{proxySaving ? t("proxy.saving") : t("proxy.saveSettings")}</Button>
           </>
         )}
       </CardContent>

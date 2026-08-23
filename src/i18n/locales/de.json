@@ -1,0 +1,883 @@
+{
+  "common": {
+    "learnMore": "Mehr erfahren",
+    "info": "Info",
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "delete": "Löschen",
+    "edit": "Bearbeiten",
+    "close": "Schließen",
+    "open": "Öffnen",
+    "add": "Hinzufügen",
+    "refresh": "Aktualisieren",
+    "loading": "Wird geladen...",
+    "ok": "OK",
+    "error": "Fehler",
+    "enabled": "Aktiviert",
+    "disabled": "Deaktiviert",
+    "yes": "Ja",
+    "no": "Nein",
+    "back": "Zurück",
+    "next": "Weiter",
+    "done": "Fertig",
+    "skip": "Überspringen",
+    "copied": "Kopiert",
+    "copy": "Kopieren",
+    "installed": "Installiert",
+    "notInstalled": "Nicht installiert",
+    "downloading": "Wird heruntergeladen...",
+    "seconds": "Sekunden",
+    "minutes": "Minuten",
+    "download": "Herunterladen",
+    "browse": "Durchsuchen",
+    "import": "Importieren",
+    "activate": "Aktivieren",
+    "deactivate": "Deaktivieren",
+    "active": "Aktiv",
+    "inactive": "Inaktiv",
+    "unchanged": "Unverändert",
+    "remove": "Entfernen",
+    "rename": "Umbenennen",
+    "duplicate": "Duplizieren",
+    "configure": "Konfigurieren",
+    "verifying": "Wird überprüft...",
+    "saving": "Wird gespeichert...",
+    "saved": "Gespeichert",
+    "unsaved": "Ungespeicherte Änderungen",
+    "errorPrefix": "Fehler: {{message}}",
+    "confirm": "Bestätigen",
+    "select": "Auswählen",
+    "selected": "Ausgewählt",
+    "unselected": "Nicht ausgewählt",
+    "loadMore": "Mehr laden",
+    "none": "Keine",
+    "speed": "Geschwindigkeit",
+    "accuracy": "Genauigkeit"
+  },
+  "sidebar": {
+    "dashboard": "Übersicht",
+    "transcribe": "Audio transkribieren",
+    "history": "Verlauf",
+    "models": "KI-Modelle",
+    "enhancement": "Verbesserung",
+    "powerMode": "Power-Modus",
+    "dictionary": "Wörterbuch",
+    "recorder": "Audioeingang",
+    "settings": "Einstellungen",
+    "permissions": "Berechtigungen",
+    "postProcessing": "Nachbearbeitung",
+    "vad": "VAD"
+  },
+  "hero": {
+    "dashboardTitle": "Übersicht",
+    "dashboardDescription": "Übersicht über Ihre Nutzung von Parla.",
+    "transcribeTitle": "Audio transkribieren",
+    "transcribeDescription": "Eine vorhandene Audiodatei mit dem ausgewählten Modell transkribieren.",
+    "historyTitle": "Verlauf",
+    "historyDescription": "Protokoll aller Transkriptionen (lokales SQLite).",
+    "modelsTitle": "KI-Modelle",
+    "modelsDescription": "Wählen Sie oben die Transkriptionsquelle. Das passende Bedienfeld wird darunter angezeigt.",
+    "enhancementTitle": "Verbesserung",
+    "enhancementDescription": "Jede Transkription vor dem Einfügen durch ein lokales oder Cloud-LLM leiten.",
+    "powerModeTitle": "Power-Modus",
+    "powerModeDescription": "Kontextabhängige Profile, die je nach aktiver App Prompt, LLM und Quelle wechseln.",
+    "permissionsTitle": "Berechtigungen",
+    "permissionsDescription": "Parla prüft die für den korrekten Betrieb erforderlichen Systemberechtigungen.",
+    "audioTitle": "Audioeingang",
+    "audioDescription": "Mikrofon, VAD und Textnachbearbeitung.",
+    "dictionaryTitle": "Wörterbuch",
+    "dictionaryDescription": "Benutzerdefiniertes Vokabular und Wortersetzungen.",
+    "settingsTitle": "Einstellungen",
+    "settingsDescription": "Globale Parla-Einstellungen.",
+    "hardwareGpu": "Hardware: NVIDIA-GPU {{device}} – CUDA {{cuda}}",
+    "hardwareCpu": "Hardware: Keine NVIDIA-GPU erkannt, CPU-Ausführung"
+  },
+  "dashboard": {
+    "title": "Übersicht",
+    "description": "Übersicht über Ihre Parla-Konfiguration und letzte Aktivitäten.",
+    "recorderReady": "Aufnahme bereit",
+    "gpuDetected": "NVIDIA-GPU erkannt",
+    "gpuNotDetected": "Nur CPU (keine NVIDIA-GPU)",
+    "selectedModel": "Ausgewähltes Modell",
+    "noneSelected": "Keine",
+    "recentHistory": "Letzter Verlauf",
+    "seeAll": "Alle anzeigen",
+    "timeSaved": "Gesparte Zeit",
+    "heroEmpty": "Ihre Parla-Reise beginnt mit Ihrer ersten Aufnahme.",
+    "heroWithData": "{{words}} diktierte Wörter in {{sessions}} Sitzung(en).",
+    "sessions": "Sitzungen",
+    "sessionsSubtitle": "abgeschlossene Transkriptionen",
+    "wordsDictated": "Diktierte Wörter",
+    "wordsDictatedSubtitle": "generierte Wörter",
+    "wordsPerMinute": "Wörter pro Minute",
+    "wordsPerMinuteSubtitle": "gegenüber etwa 40 beim Tippen",
+    "characters": "Zeichen",
+    "charactersSubtitle": "gesparte Tastenanschläge",
+    "historyCount": "{{count}} Transkription(en) im Verlauf",
+    "historyHint": "Im Verlaufsbereich können Sie suchen, exportieren oder löschen."
+  },
+  "modelPerformance": {
+    "title": "Modellleistung",
+    "description": "Aufschlüsselung von Geschwindigkeit und Verarbeitungszeit pro Modell für den ausgewählten Zeitraum.",
+    "transcriptionModels": "Transkriptionsmodelle",
+    "enhancementModels": "Verbesserungsmodelle",
+    "sessionCount": "{{count}} Sitzung(en)",
+    "fasterRealtime": "Schneller als Echtzeit",
+    "slowerRealtime": "Langsamer als Echtzeit",
+    "avgAudio": "Audio-Durchschnitt",
+    "avgProcessing": "Verarbeitung im Durchschnitt",
+    "avgEnhancement": "Durchschnittliche Verbesserungszeit",
+    "empty": "Für diesen Zeitraum liegen noch keine Daten vor. Führen Sie eine Transkription durch und kommen Sie später wieder.",
+    "period": {
+      "last7Days": "Letzte 7 Tage",
+      "last30Days": "Letzte 30 Tage",
+      "thisYear": "Dieses Jahr",
+      "allTime": "Gesamter Zeitraum"
+    }
+  },
+  "updater": {
+    "newVersion": "Neue Version {{version}} verfügbar",
+    "install": "Installieren",
+    "hide": "Ausblenden",
+    "downloading": "Wird heruntergeladen{{percent}}...",
+    "installed": "Installiert – Neustart läuft …"
+  },
+  "settings": {
+    "title": "Einstellungen",
+    "general": "Allgemein",
+    "generalDescription": "Startverhalten und Taskleistenintegration.",
+    "language": "Sprache",
+    "languageDescription": "Sprache der Benutzeroberfläche. Starten Sie die App neu, damit sie in allen Bereichen gilt.",
+    "autostart": "Beim Anmelden starten",
+    "autostartDescription": "Parla beim Anmelden bei Windows automatisch starten.",
+    "closeToTray": "In den Infobereich schließen",
+    "closeToTrayDescription": "Wenn Sie im Hauptfenster auf X klicken, läuft Parla im Hintergrund (Infobereich) weiter. Klicken Sie mit der rechten Maustaste auf das Symbol und wählen Sie „Parla beenden“, um die App vollständig zu schließen.",
+    "recording": "Aufnahme",
+    "recordingDescription": "Audioverhalten während des Diktierens.",
+    "soundFeedback": "Tonfeedback",
+    "soundFeedbackDescription": "Spielt beim Start, Stopp und Abbruch der Aufnahme einen kurzen Ton ab, damit Sie den Aufnahmestatus hören, ohne auf den Bildschirm zu schauen.",
+    "systemMute": "Systemton während der Aufnahme stummschalten",
+    "systemMuteDescription": "Schaltet Lautsprecher und Kopfhörer beim Aufnahmestart stumm, damit Benachrichtigungen und Videos nicht in die Transkription gelangen. Der ursprüngliche Status wird beim Stoppen wiederhergestellt.",
+    "resumeDelay": "Verzögerung beim Wiederherstellen",
+    "resumeDelayDescription": "Wie lange nach dem Ende der Aufnahme gewartet wird, bevor der Systemton wieder eingeschaltet wird. Nützlich, wenn das Loslassen des Tastenkürzels einen Ton in einer App auslöst.",
+    "recorderStyle": "Aufnahmestil",
+    "recorderStyleInfo": "„Mini“ zeigt unten auf dem Bildschirm eine schwebende Leiste. „Notch“ fährt wie die MacBook-Pro-Notch von oben herunter.",
+    "recorderStyleDescription": "Position der Aufnahmeeinblendung.",
+    "recorderStyleMini": "Mini (schwebende Leiste, unten)",
+    "recorderStyleMiniCaption": "Unten auf dem Bildschirm, schwebende Leiste.",
+    "recorderStyleNotch": "Notch (oben verankert)",
+    "recorderStyleNotchCaption": "Fährt von oben in den Bildschirm.",
+    "appendTrailingSpace": "Leerzeichen anhängen",
+    "appendTrailingSpaceDescription": "Fügt nach dem eingefügten Text ein Leerzeichen ein, damit das nächste Wort nicht direkt anhängt.",
+    "restoreClipboard": "Zwischenablage nach dem Einfügen wiederherstellen",
+    "restoreClipboardDescription": "Stellt den vorherigen Inhalt der Zwischenablage (Bilder, Text, Dateien) nach dem Einfügen des Diktats wieder her.",
+    "textFormatting": "Textformatierung",
+    "textFormattingDescription": "Wendet Satzschreibung, Großschreibung und Bereinigung der Zeichensetzung an.",
+    "removeFillers": "Füllwörter entfernen",
+    "fillerList": "Liste der Füllwörter (kommagetrennt)"
+  },
+  "onboarding": {
+    "welcome": {
+      "title": "Willkommen bei Parla",
+      "subtitle": "Sprachdiktat für Windows, lokal oder aus der Cloud.",
+      "description": "Lokales und cloudbasiertes Sprachdiktat für Windows. Wir richten Mikrofon, OCR und Tastenkürzel schnell ein. Das dauert weniger als 2 Minuten."
+    },
+    "permissions": {
+      "title": "Mikrofonzugriff",
+      "description": "Parla benötigt Zugriff auf Ihr Mikrofon, um Ihre Stimme aufzunehmen. Sie können dies in den Windows-Datenschutzeinstellungen verwalten.",
+      "open": "Datenschutzeinstellungen öffnen"
+    },
+    "model": {
+      "title": "Transkriptionsmodell auswählen",
+      "description": "Whisper Base ist eine gute Standardeinstellung. Sie können dies später im Bereich KI-Modelle ändern.",
+      "download": "Base herunterladen"
+    },
+    "hotkey": {
+      "title": "Tastenkürzel festlegen",
+      "description": "Standard ist die rechte Alt-Taste. Zum Aufnehmen gedrückt halten, zum Stoppen loslassen. Ein kurzes Tippen aktiviert den Freihandmodus."
+    },
+    "ready": {
+      "title": "Alles ist bereit!",
+      "description": "Drücken Sie das Tastenkürzel und beginnen Sie zu diktieren. Ihr Text wird an der Cursorposition eingefügt.",
+      "start": "Loslegen"
+    },
+    "step": {
+      "microphoneTitle": "Mikrofon",
+      "microphoneDescription": "Parla benötigt Zugriff auf Ihr Mikrofon, um Ihr Diktat aufzunehmen. Wenn kein Gerät erkannt wird, öffnen Sie Windows-Einstellungen > Datenschutz > Mikrofon.",
+      "microphoneAction": "Windows-Einstellungen",
+      "ocrTitle": "OCR Windows.Media.Ocr",
+      "ocrDescription": "Wird verwendet, um den Inhalt des aktiven Fensters zu analysieren und LLM-Prompts anzureichern. Installieren Sie ein Sprachpaket mit OCR unter Windows-Einstellungen > Zeit und Sprache > Sprache.",
+      "ocrAction": "Windows-Sprachen",
+      "autostartTitle": "Autostart",
+      "autostartDescription": "Parla beim Start von Windows starten, damit Ihr Tastenkürzel immer verfügbar ist.",
+      "hotkeyTitle": "Tastenkürzel",
+      "hotkeyDescription": "Parla lauscht auf ein globales Tastenkürzel, um die Aufnahme auszulösen. Standard: rechte Alt-Taste (je nach Modus halten oder zweimal tippen). Sie können es in den Einstellungen neu konfigurieren.",
+      "hotkeyStatus": "WH_KEYBOARD_LL-Hook aktiv"
+    },
+    "skipEarly": "Überspringen",
+    "skipLate": "Überspringen",
+    "finish": "Fertigstellen",
+    "continue": "Weiter"
+  },
+  "history": {
+    "title": "Verlauf",
+    "description": "Ihre bisherigen Diktate. Klicken Sie auf das Kopiersymbol oder exportieren Sie die vollständige Liste als CSV.",
+    "descriptionFull": "Transkriptionsprotokoll (lokales SQLite). Die Suche umfasst Rohtext und verbesserten Text.",
+    "totalEntries": "Insgesamt {{count}} Eintrag/Einträge.",
+    "empty": "Noch kein Verlauf vorhanden.",
+    "emptyHint": "Starten Sie eine Aufnahme; Ihre Transkriptionen erscheinen hier.",
+    "emptyLong": "Keine Transkription. Starten Sie eine Aufnahme, um zu beginnen.",
+    "exportCsv": "CSV exportieren",
+    "clearAll": "Alle löschen",
+    "confirmClear": "Den gesamten Verlauf löschen? Dies kann nicht rückgängig gemacht werden.",
+    "confirmDeleteCount": "{{count}} Transkription(en) löschen?",
+    "retention": "Aufbewahrung",
+    "retentionSentenceA": "Transkriptionen löschen nach",
+    "retentionSentenceB": "Minute(n). 0 = sofort löschen.",
+    "retentionSentenceC": "Nur WAV-Dateien löschen nach",
+    "retentionSentenceD": "Tag(en).",
+    "retentionHelp": "Nur ein Modus ist gleichzeitig aktiv (das Löschen von Transkriptionen hat Vorrang vor dem alleinigen Löschen von Audiodateien). Wird beim Start und alle 24 Stunden ausgeführt.",
+    "search": "Suchen...",
+    "selectedCount": "{{count}} ausgewählt",
+    "deselect": "Auswahl aufheben",
+    "selectAll": "Alle auswählen",
+    "loadMore": "Mehr laden",
+    "failed": "fehlgeschlagen",
+    "pending": "ausstehend …",
+    "emptyText": "(leer)",
+    "rawText": "Rohtext",
+    "enhancedText": "Verbesserter Text",
+    "labelPrompt": "Prompt",
+    "labelLlm": "LLM",
+    "labelEnhanceTime": "Verbesserungszeit",
+    "labelTranscribeTime": "Transkriptionszeit",
+    "labelPowerMode": "Power-Modus",
+    "labelLanguage": "Sprache",
+    "columns": {
+      "date": "Datum",
+      "source": "Quelle",
+      "duration": "Dauer",
+      "raw": "Rohtext",
+      "enhanced": "Verbessert"
+    },
+    "copy": "Kopieren",
+    "delete": "Löschen"
+  },
+  "sources": {
+    "local": "Lokal",
+    "cloud": "Cloud",
+    "parakeet": "Parakeet",
+    "localDescription": "Whisper-Modelle, die auf Ihrem Rechner laufen. 100 % offline.",
+    "cloudDescription": "Cloud-Anbieter für schnelle Transkription. Erfordert einen API-Schlüssel.",
+    "parakeetDescription": "NVIDIA Parakeet TDT über ONNX Runtime. Schnell und mehrsprachig."
+  },
+  "dictationLanguage": {
+    "title": "Diktatsprache",
+    "description": "Vom aktiven Modell ({{model}}) verwendete Sprache. Wechseln Sie zu „Automatisch erkennen“, damit das Modell die Sprache bei der Aufnahme erkennt.",
+    "auto": "Automatisch erkennen"
+  },
+  "aiModels": {
+    "defaultModel": "Standardmodell",
+    "noModelSelected": "Kein Modell ausgewählt",
+    "setAsDefault": "Als Standard festlegen",
+    "configure": "Konfigurieren",
+    "getApiKey": "API-Schlüssel abrufen",
+    "removeApiKey": "API-Schlüssel entfernen",
+    "filter": {
+      "recommended": "Empfohlen",
+      "local": "Lokal",
+      "cloud": "Cloud"
+    },
+    "cloud": {
+      "apiKeyConfig": "API-Schlüssel-Konfiguration",
+      "apiKeyPlaceholder": "Geben Sie Ihren {{provider}}-API-Schlüssel ein",
+      "verify": "Überprüfen",
+      "verifying": "Wird überprüft...",
+      "verifySuccess": "API-Schlüssel erfolgreich überprüft!",
+      "verifyFailed": "Überprüfung fehlgeschlagen",
+      "streaming": "Streaming"
+    },
+    "import": {
+      "title": "Lokales Modell importieren",
+      "description": "Benutzerdefiniertes, feinabgestimmtes Whisper-Modell importieren (.bin-GGML-Datei)",
+      "browse": "Durchsuchen",
+      "infoTip": "Fügen Sie ein benutzerdefiniertes, feinabgestimmtes Whisper-Modell zur Verwendung mit Parla hinzu. Wählen Sie die heruntergeladene .bin-Datei aus.",
+      "error": "Importieren: {{message}}"
+    }
+  },
+  "whisperModels": {
+    "englishOnly": "EN",
+    "importedBadge": "importiert",
+    "installedBadge": "installiert",
+    "approxSize": "Ungefähre Größe: {{size}}",
+    "onDisk": "auf Datenträger: {{size}}",
+    "delete": "Löschen",
+    "download": "Herunterladen",
+    "cancel": "Abbrechen",
+    "errorPrefix": "Fehler: {{message}}",
+    "dialogTitle": "Whisper-Modell importieren (.bin)",
+    "dialogFilter": "Whisper-GGML-Modell"
+  },
+  "parakeet": {
+    "executionProvider": "Ausführungsanbieter:",
+    "cpuHint": "Aktivieren Sie zur Beschleunigung das Cargo-Feature cuda-onnx (NVIDIA) oder directml-onnx (Windows-GPU).",
+    "multilingual": "mehrsprachig",
+    "englishOnly": "Englisch",
+    "download": "Herunterladen",
+    "cancel": "Abbrechen",
+    "downloading": "wird heruntergeladen …",
+    "cancelled": "Abgebrochen",
+    "errorPrefix": "Fehler: {{message}}",
+    "missingFiles": "Fehlende Dateien: {{files}}",
+    "confirmDelete": "Parakeet-Modell {{id}} löschen?"
+  },
+  "llmLocal": {
+    "title": "Lokales LLM (llama.cpp)",
+    "description": "GGUF-Modelle laufen lokal. Wählen Sie „llama.cpp (local)“ als LLM-Anbieter im Bereich Verbesserung, um das unten ausgewählte Modell zu verwenden.",
+    "cudaBuild": "Mit CUDA-Unterstützung erstellen",
+    "cpuBuildPrefix": "CPU-Build (aktivieren Sie das Cargo-Feature ",
+    "cpuBuildSuffix": " für NVIDIA-GPU).",
+    "gpuDetected": "GPU erkannt: {{device}} – CUDA {{cuda}}",
+    "inferenceParams": "Inferenzparameter",
+    "nGpuLayers": "N GPU-Schichten",
+    "nGpuLayersHelp": "0 = CPU, 1000 = alles auf der GPU (wenn CUDA aktiv ist)",
+    "contextSize": "Kontextgröße",
+    "maxTokens": "Maximale Token-Ausgabe",
+    "ggufModels": "GGUF-Modelle",
+    "importGguf": ".gguf importieren",
+    "imported": "importiert",
+    "active": "aktiv",
+    "ctx": "Kontext {{count}}",
+    "choose": "Auswählen",
+    "deactivate": "Deaktivieren",
+    "download": "Herunterladen",
+    "cancel": "Abbrechen",
+    "downloading": "wird heruntergeladen …",
+    "cancelled": "Abgebrochen",
+    "errorPrefix": "Fehler: {{message}}",
+    "confirmDelete": "Modell {{id}} löschen?"
+  },
+  "enhancement": {
+    "title": "LLM-Verbesserung",
+    "description": "Wendet nach der Transkription und vor dem Einfügen einen LLM-Prompt (Bereinigung, Umformulierung) an. Die Regeln des aktiven Prompts werden verwendet.",
+    "enableTitle": "Verbesserung aktivieren",
+    "enableDescription": "Wenn aktiviert, wird der transkribierte Text vor dem Einfügen durch das ausgewählte LLM verarbeitet.",
+    "provider": "Anbieter",
+    "selectPlaceholder": "– auswählen –",
+    "keyOk": "(Schlüssel OK)",
+    "model": "Modell",
+    "endpoint": "Endpunkt:",
+    "ollamaBaseUrl": "Ollama-Basis-URL",
+    "save": "Speichern",
+    "refreshModels": "Modelle aktualisieren",
+    "urlSaved": "URL gespeichert",
+    "modelsCount": "{{count}} Modell(e)",
+    "loadingModels": "wird geladen …",
+    "errorPrefix": "Fehler: {{message}}",
+    "localcliTemplate": "Vorlage für lokale CLI",
+    "localcliHelpA": "Die pi/claude/codex-Vorlagen erwarten den Befehl im PATH. Die CLI wird gestartet über",
+    "localcliHelpB": " . Verfügbare Umgebungsvariablen:",
+    "customCommandLabel": "Benutzerdefinierter PowerShell-Befehl",
+    "saveCommand": "Befehl speichern",
+    "commandSaved": "Befehl gespeichert",
+    "timeoutLabel": "Timeout (Sekunden)",
+    "saveTimeout": "Zeitlimit speichern",
+    "timeoutSaved": "Zeitlimit gespeichert",
+    "customBaseUrlLabel": "Basis-URL (OpenAI-kompatibel)",
+    "saveUrl": "URL speichern",
+    "customBaseUrlHelp": "Der ",
+    "customBaseUrlHelpEnd": "-Pfad wird automatisch angehängt.",
+    "customModelPlaceholder": "Exakter, vom Endpunkt erwarteter Modellname",
+    "apiKeyLabel": "{{provider}}-API-Schlüssel",
+    "apiKey": "API-Schlüssel",
+    "apiKeySavedPlaceholder": "(Schlüssel bereits gespeichert)",
+    "configured": "konfiguriert",
+    "saveKey": "Speichern",
+    "saveKeyInProgress": "wird gespeichert …",
+    "keySavedOk": "OK, Schlüssel gespeichert",
+    "keyDeleted": "Schlüssel gelöscht",
+    "activePrompt": "Aktiver Prompt",
+    "predefined": "(vordefiniert)"
+  },
+  "screenContext": {
+    "title": "Kontext des aktiven Fensters (OCR)",
+    "description": "Erfasst beim Aufnahmestart Bildschirm und OCR. Fügt den Text im System-Prompt unter ",
+    "descriptionEnd": ". Erfordert Windows 10+ (Media.Ocr).",
+    "testCapture": "Aufnahme testen",
+    "clearCache": "Cache leeren",
+    "capturing": "wird erfasst …",
+    "okStatus": "OK",
+    "cacheCleared": "Cache geleert",
+    "errorPrefix": "Fehler: {{message}}"
+  },
+  "promptEditor": {
+    "title": "Benutzerdefinierte Prompts",
+    "fromTemplate": "+ aus Vorlage",
+    "newPrompt": "Neuer Prompt",
+    "newPromptTitle": "Neuer Prompt",
+    "editPromptTitle": "Prompt bearbeiten",
+    "predefined": "vordefiniert",
+    "predefinedDescription": "Vordefinierter Prompt: Änderungen sind möglich, beim Löschen wird er wiederhergestellt.",
+    "customDescription": "Der benutzerdefinierte Prompt wird für die LLM-Verbesserung von Transkriptionen verwendet.",
+    "title_field": "Titel",
+    "description_field": "Beschreibung",
+    "injectWrapper": "In Vorlage für Transkriptionsverbesserung einfügen",
+    "injectWrapperHelp": "Für den direkten Assistentenmodus deaktivieren (der Prompt wird unverändert ohne Wrapper verwendet).",
+    "content": "Prompt-Inhalt",
+    "triggerWords": "Auslösewörter (optional)",
+    "triggerWordsPlaceholder": "Kommagetrennte Wörter",
+    "triggerWordsHelp": "Diesen Prompt automatisch aktivieren, wenn die Transkription eines dieser Wörter enthält.",
+    "saved": "gespeichert",
+    "errorPrefix": "Fehler: {{message}}",
+    "duplicateSuffix": "(Kopie)",
+    "confirmDelete": "Prompt „{{name}}“ löschen?",
+    "editTooltip": "Bearbeiten",
+    "duplicateTooltip": "Duplizieren",
+    "deleteTooltip": "Löschen",
+    "newPromptDefaultTitle": "Neuer Prompt"
+  },
+  "powerMode": {
+    "title": "Power-Modus",
+    "description": "Aktiviert während der Aufnahme automatisch ein Profil (Prompt, LLM und Transkriptionsquelle) anhand der aktiven App oder URL.",
+    "autoRestoreTitle": "Status nach der Aufnahme wiederherstellen",
+    "autoRestoreDescription": "Wenn aktiviert, stellt Parla am Ende die ursprünglichen Einstellungen wieder her.",
+    "configurations": "Konfigurationen",
+    "previewDetection": "Erkennungsvorschau",
+    "newConfig": "Neue Konfiguration",
+    "previewWindow": "Fenster:",
+    "previewUrl": "URL:",
+    "matchedConfig": "Passende Konfiguration:",
+    "noMatch": "keine",
+    "emptyList": "Keine Konfigurationen. Klicken Sie auf „Neue Konfiguration“, um zu beginnen.",
+    "editTooltip": "Bearbeiten",
+    "deleteTooltip": "Löschen",
+    "confirmDelete": "Konfiguration „{{name}}“ löschen?",
+    "promptAppName": "Exe-Name (ohne .exe), z. B.: chrome, code, notepad",
+    "promptUrl": "URL oder Fragment (z. B.: github.com, docs.google.com/spreadsheets)",
+    "newConfigTitle": "Neue Konfiguration",
+    "editConfigTitle": "Konfiguration bearbeiten",
+    "sheetDescription": "Aktiviert automatisch ein Profil (Prompt, LLM und Quelle) anhand der aktiven App oder URL.",
+    "defaultLabel": "Standard",
+    "enabledLabel": "Aktiviert",
+    "apps": "Apps (exe)",
+    "urls": "URLs",
+    "addTrigger": "Hinzufügen",
+    "enhancementFieldset": "LLM Verbesserung",
+    "enableEnhancement": "Verbesserung aktivieren",
+    "screenContextPrefix": "Kontext des aktiven Fensters (OCR):",
+    "screenContextUnchanged": "unverändert",
+    "screenContextActive": "aktiv",
+    "screenContextInactive": "deaktiviert",
+    "promptSelect": "Aktiver Prompt",
+    "unchangedOption": "– unverändert –",
+    "providerLlm": "LLM-Anbieter",
+    "modelLlm": "LLM-Modell",
+    "sourceFieldset": "Transkriptionsquelle",
+    "type": "Typ",
+    "typeLocal": "Lokal Whisper",
+    "typeParakeet": "Parakeet",
+    "typeCloud": "Cloud",
+    "whisperModelId": "Whisper-Modell-ID",
+    "parakeetModelId": "Parakeet-Modell-ID",
+    "cloudProvider": "Cloud-Anbieter",
+    "cloudModel": "Cloud-Modell",
+    "language": "Sprache (Whisper-Code: en, fr, leer für automatisch)",
+    "languagePlaceholder": "leer lassen = unverändert",
+    "namePlaceholder": "Name",
+    "defaultName": "Neue Konfiguration",
+    "appsSingular": " App",
+    "appsPlural": " Apps",
+    "urlsSingular": " URL",
+    "urlsPlural": " URLs",
+    "shortcutHint": "Tastenkürzel: Halten Sie während der Aufnahme Alt gedrückt und drücken Sie diese Zahl, um zu diesem Profil zu wechseln"
+  },
+  "recorder": {
+    "title": "Aufnahme",
+    "description": "Konfigurieren Sie Audiogerät, Tastenkürzel und Visualisierungsstil.",
+    "recordingTitle": "Audioaufnahme",
+    "recordingDescription": "WASAPI-16-kHz-Mono-Int16-Aufnahme, ausgelöst durch die rechte Alt-Taste (für PTT halten, für Freihandmodus antippen)",
+    "audioDevice": "Audiogerät",
+    "device": "Gerät",
+    "hotkey": "Tastenkürzel",
+    "noDevice": "(keines erkannt)",
+    "defaultLabel": "(Standard)",
+    "refresh": "Aktualisieren",
+    "stop": "Stopp",
+    "cancel": "Abbrechen",
+    "record": "Aufnehmen",
+    "recording": "Aufnahme läuft",
+    "hotkeyBadge": "Tastenkürzel: {{action}}",
+    "lastRecording": "Letzte Aufnahme",
+    "errorPrefix": "Fehler: {{message}}",
+    "mode": {
+      "toggle": "Umschalten",
+      "pushToTalk": "Sprechtaste",
+      "hybrid": "Hybrid"
+    }
+  },
+  "transcribe": {
+    "title": "Lokale Transkription",
+    "description": "Eine Aufnahme transkribieren oder eine Audiodatei mit dem ausgewählten Modell auswählen",
+    "parakeetDescription": "Eine Aufnahme transkribieren oder eine Audiodatei mit dem ausgewählten Modell auswählen",
+    "audioSource": "Audioquelle",
+    "noAudio": "Nehmen Sie auf oder wählen Sie eine Audiodatei aus",
+    "chooseAudio": "Audio auswählen",
+    "replaceAudio": "Audio ersetzen",
+    "chooseAudioTitle": "Audiodatei auswählen",
+    "audioFiles": "Audiodateien",
+    "useLatestRecording": "Stattdessen letzte Aufnahme verwenden",
+    "activeModel": "Aktives Modell",
+    "noSource": "Keine lokale Quelle ausgewählt",
+    "cloudUnavailable": "Manuelle Transkription unterstützt nur lokale Quellen",
+    "modelUnavailable": "Das ausgewählte Modell wurde nicht heruntergeladen oder ist unvollständig",
+    "language": "Sprache",
+    "auto": "Automatisch erkennen",
+    "french": "Französisch",
+    "english": "Englisch",
+    "spanish": "Spanisch",
+    "german": "Deutsch",
+    "italian": "Italienisch",
+    "portuguese": "Portugiesisch",
+    "dutch": "Niederländisch",
+    "japanese": "Japanisch",
+    "chinese": "Chinesisch",
+    "threads": "Threads",
+    "transcribe": "Transkribieren",
+    "chooseOrRecord": "Nehmen Sie einen Clip auf oder wählen Sie eine Audiodatei aus",
+    "selectModel": "Modell auswählen",
+    "completedIn": "Fertig in {{seconds}} s",
+    "errorPrefix": "Fehler: {{message}}"
+  },
+  "postProcessing": {
+    "title": "Textnachbearbeitung",
+    "description": "Filter, die nach der Transkription und vor dem Einfügen an der Cursorposition angewendet werden",
+    "formatParagraphs": "Als Absätze formatieren",
+    "formatParagraphsDescription": "50-Wort-Blöcke, maximal 4 aussagekräftige Sätze pro Absatz",
+    "removeFillers": "Füllwörter entfernen",
+    "removeFillersDescription": "Entfernt anhand der folgenden Liste äh, ähm, hm usw.",
+    "appendSpace": "Leerzeichen anhängen",
+    "appendSpaceDescription": "Fügt nach dem eingefügten Text ein Leerzeichen ein (nützlich beim Verketten mit weiteren Wörtern).",
+    "restoreClipboard": "Zwischenablage nach dem Einfügen wiederherstellen",
+    "restoreClipboardDescription": "Speichert und stellt die Text-Zwischenablage rund um das Einfügen wieder her.",
+    "fillersLabel": "Füllwörter (kommagetrennt)",
+    "save": "Speichern",
+    "fillersDefault": "VoiceInk-Standard: äh, ähm, hm usw."
+  },
+  "dictionary": {
+    "title": "Persönliches Wörterbuch",
+    "description": "Ersetzungen nach der Transkription. Varianten werden durch Kommas getrennt. Für Schriften ohne Leerzeichen (CJK, Thai) wird ersatzweise nach Teilzeichenfolgen gesucht.",
+    "originalPlaceholder": "Original (CSV: docker, dockr)",
+    "replacementPlaceholder": "Ersetzen durch",
+    "add": "Hinzufügen",
+    "empty": "Kein Eintrag. Fügen Sie eine erste Ersetzung hinzu, um die Ausgabe zu vereinheitlichen.",
+    "bothRequired": "Beide Felder sind erforderlich",
+    "enable": "Aktivieren",
+    "disable": "Deaktivieren",
+    "errorPrefix": "Fehler: {{message}}"
+  },
+  "vad": {
+    "title": "Silero VAD",
+    "description": "Sprachaktivitätserkennung: Ignoriert Stille und transkribiert wie VoiceInk nur Sprachsegmente (ggml-silero-v5.1.2).",
+    "enableTitle": "VAD aktivieren",
+    "installed": "Das Silero-Modell ist installiert. Schalten Sie es zum Aktivieren oder Deaktivieren um.",
+    "downloadFirst": "Laden Sie zuerst das Modell herunter, damit Sie es aktivieren können.",
+    "modelInstalled": "VAD-Modell installiert",
+    "size": "Größe {{size}}",
+    "delete": "Löschen",
+    "downloadingLabel": "Herunterladen: {{pct}}%",
+    "downloadButton": "Herunterladen ggml-silero-v5.1.2.bin (~2 MB)",
+    "errorPrefix": "Fehler: {{message}}"
+  },
+  "permissions": {
+    "intro": "Aktueller Status der Berechtigungen und Systemabhängigkeiten.",
+    "refresh": "Aktualisieren",
+    "microphoneTitle": "Mikrofon",
+    "microphoneDescription": "Zum Aufnehmen von Diktataudio erforderlich.",
+    "microphoneAction": "Windows-Einstellungen",
+    "microphoneTip": "Wenn Parla kein Mikrofon erkennt, öffnen Sie Windows-Einstellungen > Datenschutz > Mikrofon und erlauben Sie Desktop-Apps den Zugriff. Prüfen Sie außerdem, ob das Mikrofon angeschlossen und unter Audioeingang ausgewählt ist.",
+    "ocrTitle": "OCR Windows.Media.Ocr",
+    "ocrDescription": "Den Text des aktiven Fensters zur Verbesserung auslesen.",
+    "ocrAction": "Windows-Sprachen",
+    "ocrTip": "OCR verwendet das aktive Windows-Sprachpaket. Fügen Sie die gewünschte Sprache (Französisch, Englisch usw.) unter Windows-Einstellungen > Zeit und Sprache > Sprache hinzu und laden Sie anschließend das optionale OCR-Sprachpaket herunter.",
+    "autostartTitle": "Autostart",
+    "autostartDescription": "Parla beim Windows-Start starten.",
+    "autostartActivate": "Aktivieren",
+    "autostartDeactivate": "Deaktivieren",
+    "hotkeyTitle": "Globaler Tastatur-Hook",
+    "hotkeyDescription": "Tastenkürzel für die Sprechtaste überall in Windows erfassen.",
+    "hotkeyTip": "Parla installiert einen Low-Level-WH_KEYBOARD_LL-Hook, der unter Windows keine besonderen Berechtigungen benötigt. Das Standard-Tastenkürzel ist die rechte Alt-Taste.",
+    "audio": {
+      "detected_one": "{{count}} Audioeingang erkannt",
+      "detected_other": "{{count}} Audioeingänge erkannt",
+      "none": "Kein Mikrofon erkannt",
+      "hint": "Schließen Sie ein Mikrofon an oder prüfen Sie Einstellungen > Datenschutz > Mikrofon."
+    },
+    "ocr": {
+      "available": "Windows.Media.Ocr verfügbar",
+      "unavailable": "OCR nicht verfügbar",
+      "hint": "Fügen Sie unter Windows-Einstellungen > Zeit und Sprache > Sprache ein OCR-Sprachpaket hinzu."
+    },
+    "autostart": {
+      "enabled": "Autostart aktiviert",
+      "disabled": "Autostart deaktiviert",
+      "unknown": "Autostartstatus unbekannt",
+      "disabledHint": "Parla wird nicht automatisch mit Windows gestartet."
+    },
+    "hotkey": {
+      "active": "Tastatur-Hook aktiv",
+      "hint": "Der Standardauslöser ist die rechte Alt-Taste. Konfigurieren Sie einen anderen in den Einstellungen."
+    }
+  },
+  "miniRecorder": {
+    "transcribing": "Transkription läuft",
+    "enhancing": "Verbesserung läuft",
+    "promptActive": "Aktiver Prompt",
+    "enhancementDisabled": "Verbesserung deaktiviert",
+    "enhancementLlm": "LLM-Verbesserung",
+    "active": "aktiv",
+    "off": "aus",
+    "noPrompts": "Kein Prompt",
+    "powerMode": "Power-Modus",
+    "noConfigs": "Keine Konfiguration definiert. Erstellen Sie ein Profil, damit Parla Prompt, LLM und Quelle automatisch anhand der aktiven App wechselt.",
+    "openPowerMode": "Power-Modus öffnen",
+    "autoSwitch": "Wechselt automatisch abhängig von der aktuellen App. Alt+Zahl wählt ein Profil manuell aus."
+  },
+  "modelCatalog": {
+    "imported": {
+      "name": "{{name}}",
+      "notes": "{{name}}"
+    },
+    "whisper": {
+      "ggml-tiny": {
+        "name": "Whisper Tiny",
+        "notes": "Kleines mehrsprachiges Whisper-Modell."
+      },
+      "ggml-tiny_en": {
+        "name": "Whisper Tiny (Englisch)",
+        "notes": "Whisper-Modell nur für Englisch."
+      },
+      "ggml-base": {
+        "name": "Whisper Base",
+        "notes": "Ausgewogenes mehrsprachiges Modell für CPU-Transkription."
+      },
+      "ggml-base_en": {
+        "name": "Whisper Base (Englisch)",
+        "notes": "Modell nur für Englisch mit verbesserter Genauigkeit."
+      },
+      "ggml-large-v2": {
+        "name": "Whisper Large v2",
+        "notes": "Mehrsprachiges Modell mit hoher Genauigkeit; benötigt viel RAM."
+      },
+      "ggml-large-v3": {
+        "name": "Whisper Large v3",
+        "notes": "Neuestes mehrsprachiges CPU-Modell mit hoher Genauigkeit."
+      },
+      "ggml-large-v3-turbo": {
+        "name": "Whisper Large v3 Turbo",
+        "notes": "Schnellere Large-v3-Version, empfohlen mit CUDA."
+      },
+      "ggml-large-v3-turbo-q5_0": {
+        "name": "Whisper Large v3 Turbo (Q5_0)",
+        "notes": "Quantisiertes Modell mit gutem Verhältnis von Qualität zu Größe."
+      }
+    },
+    "parakeet": {
+      "parakeet-tdt-0_6b-v2": {
+        "name": "Parakeet TDT 0.6B v2 (Englisch, F16)",
+        "notes": "Referenzmodell. Nur Englisch. Herunterladen etwa 2,5 GB."
+      },
+      "parakeet-tdt-0_6b-v2-int8": {
+        "name": "Parakeet TDT 0.6B v2 (Englisch, int8)",
+        "notes": "Quantisierte int8-Variante. Etwa 680 MB. Nur Englisch."
+      },
+      "parakeet-tdt-0_6b-v3": {
+        "name": "Parakeet TDT 0.6B v3 (mehrsprachig, F16)",
+        "notes": "Mehrsprachiges Modell (Englisch + 25 europäische Sprachen). ~2,5 GB."
+      },
+      "parakeet-tdt-0_6b-v3-int8": {
+        "name": "Parakeet TDT 0.6B v3 (mehrsprachig, int8)",
+        "notes": "Quantisierte mehrsprachige Variante. ~680 MB."
+      }
+    },
+    "gguf": {
+      "qwen2_5-3b-instruct-q4": {
+        "name": "Qwen 2.5 3B Instruct",
+        "notes": "Kompaktes Instruct-Modell für lokale Verbesserung."
+      },
+      "llama-3_2-3b-instruct-q4": {
+        "name": "Llama 3.2 3B Instruct",
+        "notes": "Kompaktes Llama-Instruct-Modell für lokale Verbesserung."
+      },
+      "gemma-2-2b-it-q4": {
+        "name": "Gemma 2 2B IT",
+        "notes": "Kompaktes Instruct-Modell für lokale Verbesserung."
+      },
+      "phi-3_5-mini-instruct-q4": {
+        "name": "Phi 3.5 Mini Instruct",
+        "notes": "Kompaktes Instruct-Modell für lokale Verbesserung."
+      }
+    },
+    "cloud": {
+      "groq_whisper-large-v3-turbo": {
+        "name": "Whisper Large v3 Turbo",
+        "notes": "Schnelle Cloud-Transkription."
+      },
+      "elevenlabs_scribe_v1": {
+        "name": "Scribe v1",
+        "notes": "ElevenLabs Sprach-zu-Text-Modell."
+      },
+      "elevenlabs_scribe_v2": {
+        "name": "Scribe v2",
+        "notes": "ElevenLabs Sprach-zu-Text-Modell."
+      },
+      "deepgram_nova-3": {
+        "name": "Nova-3",
+        "notes": "Allgemeine Cloud-Transkription."
+      },
+      "deepgram_nova-3-medical": {
+        "name": "Nova-3 medizinisch",
+        "notes": "Medizinische Cloud-Transkription."
+      },
+      "mistral_voxtral-mini-latest": {
+        "name": "Voxtral Mini",
+        "notes": "Mistral Cloud-Transkriptionsmodell."
+      },
+      "mistral_voxtral-mini-transcribe-realtime-2602": {
+        "name": "Voxtral Mini Echtzeit",
+        "notes": "Mistral Echtzeit-Transkriptionsmodell."
+      },
+      "soniox_stt-async-v4": {
+        "name": "STT Asynchron v4",
+        "notes": "Asynchrone Cloud-Transkription."
+      },
+      "soniox_stt-rt-v4": {
+        "name": "STT Echtzeit v4",
+        "notes": "Echtzeit-Cloud-Transkription."
+      },
+      "speechmatics_speechmatics-enhanced": {
+        "name": "Speechmatics Verbessert",
+        "notes": "Verbesserte Cloud-Transkription."
+      },
+      "gemini_gemini-2_5-pro": {
+        "name": "Gemini 2.5 Pro",
+        "notes": "Google Cloud-Transkriptionsmodell."
+      },
+      "gemini_gemini-2_5-flash": {
+        "name": "Gemini 2.5 Flash",
+        "notes": "Schnelles Google-Cloud-Transkriptionsmodell."
+      },
+      "xai_grok-stt": {
+        "name": "Grok STT",
+        "notes": "xAI Cloud-Transkriptionsmodell."
+      },
+      "cartesia_ink-whisper": {
+        "name": "Ink Whisper",
+        "notes": "Cartesia Cloud-Transkriptionsmodell."
+      },
+      "assemblyai_universal-3-pro": {
+        "name": "Universal-3 Pro",
+        "notes": "AssemblyAI Cloud-Transkriptionsmodell."
+      },
+      "assemblyai_universal-streaming": {
+        "name": "Universal Streaming",
+        "notes": "AssemblyAI Echtzeit-Transkriptionsmodell."
+      }
+    }
+  },
+  "proxy": {
+    "title": "Anwendungsproxy",
+    "description": "Legen Sie fest, wie Parla ausgehenden HTTP(S)-Verkehr weiterleitet: Deaktivieren Sie dies für direkte Verbindungen; aktivieren Sie es ohne URL für Systemeinstellungen einschließlich WPAD und integrierter Authentifizierung; oder geben Sie eine URL für einen expliziten Proxy ein.",
+    "loading": "Anwendungsproxy-Einstellungen werden geladen …",
+    "enable": "Anwendungsproxy aktivieren",
+    "enableHelp": "Aus: direkte Verbindungen. Ein: Systemeinstellungen bei leerer URL oder expliziter Proxy bei eingetragener URL verwenden.",
+    "url": "URL des Anwendungsproxys",
+    "urlPlaceholder": "https://proxy.example:8080",
+    "urlHelp": "Leer lassen für Systemeinstellungen einschließlich WPAD und integrierter Authentifizierung. Geben Sie eine http-, https- oder socks5-URL für einen expliziten Proxy ein.",
+    "noProxy": "No-Proxy-Einträge",
+    "noProxyPlaceholder": "localhost, 127.0.0.1, .example.com, 10.0.0.0/8",
+    "noProxyHelp": "Kommagetrennte NO_PROXY-kompatible Muster. Passende Ziele umgehen den Anwendungsproxy; im Systemmodus steuern die Windows-Einstellungen das Umgehungsverhalten.",
+    "credentials": "Zugangsdaten für den Anwendungsproxy",
+    "credentialsSavedState": "Zugangsdaten werden sicher im Betriebssystem-Tresor gespeichert.",
+    "noCredentials": "Keine Zugangsdaten gespeichert.",
+    "removeCredentials": "Zugangsdaten entfernen",
+    "username": "Benutzername",
+    "password": "Passwort",
+    "saveCredentials": "Zugangsdaten speichern",
+    "saving": "Wird gespeichert …",
+    "saveSettings": "Anwendungsproxy-Einstellungen speichern",
+    "loadError": "Anwendungsproxy-Einstellungen konnten nicht geladen werden.",
+    "invalidScheme": "Die URL des Anwendungsproxys muss http, https oder socks5 verwenden.",
+    "invalidUrl": "Geben Sie eine gültige URL für den Anwendungsproxy ein.",
+    "credentialsInFields": "Geben Sie Zugangsdaten in den dafür vorgesehenen Feldern ein, nicht in der URL.",
+    "settingsSaved": "Einstellungen gespeichert.",
+    "settingsSaveError": "Einstellungen konnten nicht gespeichert werden.",
+    "credentialsRequired": "Geben Sie zum Speichern Benutzername und Passwort ein.",
+    "credentialsSaved": "Zugangsdaten sicher gespeichert.",
+    "credentialsSaveError": "Zugangsdaten konnten nicht gespeichert werden.",
+    "credentialsRemoved": "Zugangsdaten entfernt.",
+    "credentialsRemoveError": "Zugangsdaten konnten nicht entfernt werden."
+  },
+  "promptDetection": {
+    "triggerDetected": "Triggerwort erkannt: {{word}}",
+    "promptOverride": "Prompt überschrieben mit: {{prompt}}"
+  },
+  "errors": {
+    "timeout": "Zeitüberschreitung der Anfrage. Prüfen Sie Ihre Netzwerkverbindung.",
+    "networkError": "Netzwerkfehler. Prüfen Sie Ihre Verbindung.",
+    "apiKeyMissing": "API-Schlüssel für {{provider}} fehlt.",
+    "modelNotDownloaded": "Modell {{model}} wurde noch nicht heruntergeladen.",
+    "generic": "Ein Fehler ist aufgetreten: {{message}}",
+    "noWhisper": "Kein Whisper-Modell ausgewählt. Öffnen Sie KI-Modelle und wählen Sie eines aus.",
+    "noParakeet": "Kein Parakeet-Modell ausgewählt. Öffnen Sie KI-Modelle und wählen Sie eines aus.",
+    "parakeetIncomplete": "Parakeet-Modell {{model}} ist unvollständig. Laden Sie es in KI-Modelle erneut herunter.",
+    "cloudUnconfigured": "Kein Cloud-Anbieter oder Modell ausgewählt. Öffnen Sie KI-Modelle und konfigurieren Sie eines."
+  },
+  "prompts": {
+    "default": {
+      "title": "Standard",
+      "description": "Bereinigt die Transkription (Grammatik, Füllwörter, Formatierung)."
+    },
+    "assistant": {
+      "title": "Assistent",
+      "description": "Assistentenmodus: direkte Antwort, kein Markdown."
+    }
+  },
+  "hotkey": {
+    "cardTitle": "Aufnahme-Tastenkürzel",
+    "cardDescription": "Wählen Sie die Taste oder Tastenkombination, die das Diktat aktiviert. Standard ist die rechte Alt-Taste.",
+    "primary": "Primär",
+    "secondary": "Sekundär",
+    "addSecondary": "Zweites Tastenkürzel hinzufügen",
+    "removeSecondary": "Zweites Tastenkürzel entfernen",
+    "resetDefaults": "Auf Standardwerte zurücksetzen",
+    "altGrTip": "Auf AZERTY/QWERTZ-Tastaturen erzeugt AltGr ein künstliches Rechts-Alt-Ereignis bei der Eingabe von @, #, {, [, usw. Parla erkennt diese automatisch und ignoriert sie.",
+    "options": {
+      "none": "Keine (deaktiviert)",
+      "rightAlt": "Rechte Alt-Taste",
+      "leftAlt": "Linke Alt-Taste",
+      "rightCtrl": "Rechte Strg-Taste",
+      "leftCtrl": "Linke Strg-Taste",
+      "rightWin": "Rechte Windows-Taste",
+      "rightShift": "Rechte Umschalttaste",
+      "leftShift": "Linke Umschalttaste",
+      "custom": "Benutzerdefinierte Kombination..."
+    },
+    "modes": {
+      "toggle": "Umschalten",
+      "pushToTalk": "Sprechtaste",
+      "hybrid": "Hybrid"
+    },
+    "modeHints": {
+      "toggle": "Drücken zum Starten, erneut drücken zum Stoppen. Freihändiges Diktat.",
+      "pushToTalk": "Zum Aufnehmen halten, zum Stoppen loslassen.",
+      "hybrid": "Antippen (unter 500 ms) startet eine Freihandsitzung. Halten (über 500 ms) aktiviert die Sprechtaste."
+    },
+    "record": {
+      "title": "Benutzerdefinierte Kombination aufnehmen",
+      "hint": "Drücken Sie die gewünschten Tasten. Mindestens ein Modifikator und eine Abschlusstaste erforderlich (z. B. Strg + Alt + R, F13, Win + Leertaste). Esc bricht ab.",
+      "waiting": "Drücken Sie Ihre Kombination …",
+      "needsModifier": "Eine einzelne Taste ist nur für F1–F24, Einfügen, Löschen, Pos1, Ende, BildAuf/Ab, Pause und Druck erlaubt. Andernfalls müssen Sie Strg, Alt, Umschalt oder Windows hinzufügen."
+    },
+    "editCombo": "Klicken, um die Kombination zu ändern"
+  }
+}
