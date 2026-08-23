@@ -195,7 +195,7 @@ Bug reports, feature requests, and pull requests are all welcome. See [CONTRIBUT
 You can also help by:
 - Reporting bugs or regressions via [issues](https://github.com/LitteRabbit-37/Parla/issues)
 - Suggesting features or enhancements
-- Improving the documentation or translations (FR / EN / ES)
+- Improving the documentation or translations (FR / EN / ES / DE / JA)
 
 ## License
 

@@ -63,3 +63,8 @@ coverage/
 !src-tauri/sounds/
 !src-tauri/sounds/*.wav
 !src-tauri/sounds/*.mp3
+
+# BEGIN oh-my-opencode-slim worktrees
+.slim/worktrees/
+.slim/worktrees.json
+# END oh-my-opencode-slim worktrees
