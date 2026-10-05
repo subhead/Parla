@@ -328,6 +328,11 @@ pub async fn enhance_with_override(
     } else {
         sel.model
     };
+    if provider.id() == "custom" && model.trim().is_empty() {
+        return Err(anyhow!(
+            "enhancement model is empty; configure an enhancement model"
+        ));
+    }
 
     let api_key = if provider.requires_api_key() {
         api_keys::get_api_key(provider.id())

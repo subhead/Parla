@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Check, Key, Loader2, Sparkles, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -35,6 +35,13 @@ export function EnhancementPanel() {
   const [ollamaStatus, setOllamaStatus] = useState("");
   const [customBaseUrl, setCustomBaseUrl] = useState("");
   const [customModel, setCustomModel] = useState("");
+  const customBaseUrlDraft = useRef("");
+  const customModelDraft = useRef("");
+  const customConfigurationDirty = useRef(false);
+  const customConfigurationVersion = useRef(0);
+  const selectionVersion = useRef(0);
+  const customSaveInProgress = useRef(false);
+  const [savingCustomConfiguration, setSavingCustomConfiguration] = useState(false);
   const [localcliCustomCmd, setLocalcliCustomCmd] = useState("");
   const [localcliTimeout, setLocalcliTimeout] = useState(45);
   const [localcliStatus, setLocalcliStatus] = useState("");
@@ -44,6 +51,8 @@ export function EnhancementPanel() {
   }, []);
 
   async function refresh() {
+    const customVersion = customConfigurationVersion.current;
+    const currentSelectionVersion = selectionVersion.current;
     try {
       const [en, provs, sel, ps, act, oBase, cBase, liCmd, liTo] =
         await Promise.all([
@@ -59,15 +68,33 @@ export function EnhancementPanel() {
         ]);
       setEnabled(en);
       setProviders(provs);
-      setSelection(sel);
+      if (
+        customVersion === customConfigurationVersion.current &&
+        currentSelectionVersion === selectionVersion.current &&
+        !customConfigurationDirty.current
+      ) {
+        setSelection(sel);
+      }
       setPrompts(ps);
       setActivePromptId(act);
       setOllamaBaseUrl(oBase);
-      setCustomBaseUrl(cBase ?? "");
+      if (
+        !customConfigurationDirty.current &&
+        customVersion === customConfigurationVersion.current
+      ) {
+        customBaseUrlDraft.current = cBase ?? "";
+        setCustomBaseUrl(customBaseUrlDraft.current);
+      }
       setLocalcliCustomCmd(liCmd ?? "");
       setLocalcliTimeout(liTo);
-      if (sel?.provider_id === "custom") {
-        setCustomModel(sel.model);
+      if (
+        sel?.provider_id === "custom" &&
+        !customConfigurationDirty.current &&
+        customVersion === customConfigurationVersion.current &&
+        currentSelectionVersion === selectionVersion.current
+      ) {
+        customModelDraft.current = sel.model;
+        setCustomModel(customModelDraft.current);
       }
       if (sel?.provider_id === "ollama") {
         refreshOllamaModels();
@@ -100,30 +127,42 @@ export function EnhancementPanel() {
   }
 
   async function saveCustomBaseUrl() {
+    if (customSaveInProgress.current) return;
+    if (!customModelDraft.current.trim()) {
+      setStatus((s) => ({ ...s, custom: t("enhancement.customModelRequired") }));
+      return;
+    }
+    customSaveInProgress.current = true;
+    setSavingCustomConfiguration(true);
     try {
-      await api.setCustomBaseUrl(customBaseUrl.trim());
-      await refreshCustomConfiguration();
-      setStatus((s) => ({ ...s, custom: t("enhancement.urlSaved") }));
+      let savedModel = "";
+      let savedBaseUrl = "";
+      while (true) {
+        const revision = customConfigurationVersion.current;
+        savedModel = customModelDraft.current.trim();
+        const baseUrl = customBaseUrlDraft.current.trim();
+        if (!savedModel) {
+          setStatus((s) => ({ ...s, custom: t("enhancement.customModelRequired") }));
+          return;
+        }
+        await api.setCustomBaseUrl(baseUrl);
+        await api.setLlmSelection("custom", savedModel);
+        if (revision !== customConfigurationVersion.current) continue;
+        savedBaseUrl = (await api.getCustomBaseUrl()) ?? "";
+        if (revision !== customConfigurationVersion.current) continue;
+        break;
+      }
+      customBaseUrlDraft.current = savedBaseUrl;
+      setCustomBaseUrl(savedBaseUrl);
+      setSelection({ provider_id: "custom", model: savedModel });
+      customConfigurationVersion.current += 1;
+      customConfigurationDirty.current = false;
+      setStatus((s) => ({ ...s, custom: t("enhancement.customConfigurationSaved") }));
     } catch (e) {
       setStatus((s) => ({ ...s, custom: t("enhancement.errorPrefix", { message: String(e) }) }));
-    }
-  }
-
-  async function selectCustomModel(model: string) {
-    setCustomModel(model);
-    await api.setLlmSelection("custom", model);
-    await refreshCustomConfiguration();
-  }
-
-  async function refreshCustomConfiguration() {
-    const [savedBaseUrl, savedSelection] = await Promise.all([
-      api.getCustomBaseUrl(),
-      api.getLlmSelection(),
-    ]);
-    setCustomBaseUrl(savedBaseUrl ?? "");
-    if (savedSelection?.provider_id === "custom") {
-      setSelection(savedSelection);
-      setCustomModel(savedSelection.model);
+    } finally {
+      customSaveInProgress.current = false;
+      setSavingCustomConfiguration(false);
     }
   }
 
@@ -133,14 +172,15 @@ export function EnhancementPanel() {
   }
 
   async function selectProvider(providerId: string) {
+    if (customSaveInProgress.current) return;
     const p = providers.find((x) => x.id === providerId);
     if (!p) return;
+    selectionVersion.current += 1;
     let model = p.default_model || "";
     if (providerId === "custom") {
-      const savedSelection = await api.getLlmSelection();
-      if (savedSelection?.provider_id === "custom") {
-        model = savedSelection.model;
-      }
+      // Keep the custom model draft while switching providers. The global
+      // selection belongs to only one provider at a time.
+      model = customModelDraft.current;
     }
     setSelection({ provider_id: providerId, model });
     await api.setLlmSelection(providerId, model);
@@ -243,6 +283,7 @@ export function EnhancementPanel() {
           <select
             value={selection?.provider_id ?? ""}
             onChange={(e) => selectProvider(e.target.value)}
+            disabled={savingCustomConfiguration}
             className="h-9 rounded-md border border-input bg-background px-2 text-sm"
           >
             <option value="">{t("enhancement.selectPlaceholder")}</option>
@@ -380,12 +421,17 @@ export function EnhancementPanel() {
               <input
                 type="text"
                 value={customBaseUrl}
-                onChange={(e) => setCustomBaseUrl(e.target.value)}
+                onChange={(e) => {
+                  customConfigurationVersion.current += 1;
+                  customConfigurationDirty.current = true;
+                  customBaseUrlDraft.current = e.target.value;
+                  setCustomBaseUrl(e.target.value);
+                }}
                 placeholder="https://my-llm.example.com/v1"
                 className="flex h-9 flex-1 rounded-md border border-input bg-background px-3 text-sm"
               />
-              <Button size="sm" onClick={saveCustomBaseUrl}>
-                {t("enhancement.saveUrl")}
+              <Button size="sm" onClick={saveCustomBaseUrl} disabled={savingCustomConfiguration}>
+                {t("enhancement.saveCustomConfiguration")}
               </Button>
             </div>
             <p className="text-xs text-muted-foreground">
@@ -397,8 +443,12 @@ export function EnhancementPanel() {
             <input
               type="text"
               value={customModel}
-              onChange={(e) => setCustomModel(e.target.value)}
-              onBlur={(e) => selectCustomModel(e.target.value)}
+              onChange={(e) => {
+                customConfigurationVersion.current += 1;
+                customConfigurationDirty.current = true;
+                customModelDraft.current = e.target.value;
+                setCustomModel(e.target.value);
+              }}
               placeholder={t("enhancement.customModelPlaceholder")}
               className="flex h-9 rounded-md border border-input bg-background px-3 text-sm"
             />

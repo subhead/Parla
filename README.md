@@ -90,7 +90,7 @@ Compared to existing Windows dictation tools, Parla targets feature parity with 
 | Local CLI (PowerShell) | No | Local process (pi / claude / codex templates or custom) |
 | Custom OpenAI-compat | Optional | User-configured HTTPS URL |
 
-Custom OpenAI-compatible providers require an HTTPS base URL. API keys are optional, stored securely in Windows Credential Manager, and sent as Bearer authentication when supplied.
+Custom OpenAI-compatible providers require an HTTPS base URL and the endpoint's model name or alias. Enter the URL and model together, then select **Save custom settings**. API keys are optional, stored securely in Windows Credential Manager, and sent as Bearer authentication when supplied.
 
 ### Prerequisites
 

@@ -29,6 +29,12 @@ pub fn build_request(
     api_key: &str,
     req: &EnhancementRequest,
 ) -> Result<crate::transcription::cloud::http::HttpRequest> {
+    if req.model.trim().is_empty() {
+        return Err(anyhow!(
+            "enhancement model is empty; configure an enhancement model"
+        ));
+    }
+
     let mut body = serde_json::Map::new();
     body.insert("model".into(), json!(req.model));
     body.insert(
@@ -146,5 +152,54 @@ mod tests {
             .headers
             .iter()
             .any(|(name, _)| name.eq_ignore_ascii_case("authorization")));
+    }
+
+    #[test]
+    fn request_rejects_empty_model() {
+        let req = EnhancementRequest {
+            system_prompt: "system".into(),
+            user_message: "user".into(),
+            model: String::new(),
+            temperature: 0.2,
+            reasoning: ReasoningConfig::default(),
+            timeout: Duration::from_secs(1),
+            endpoint_override: None,
+        };
+
+        assert!(build_request("https://example.test/chat", "key", &req).is_err());
+    }
+
+    #[test]
+    fn request_rejects_whitespace_only_model() {
+        let req = EnhancementRequest {
+            system_prompt: "system".into(),
+            user_message: "user".into(),
+            model: " \t\n ".into(),
+            temperature: 0.2,
+            reasoning: ReasoningConfig::default(),
+            timeout: Duration::from_secs(1),
+            endpoint_override: None,
+        };
+
+        assert!(build_request("https://example.test/chat", "key", &req).is_err());
+    }
+
+    #[test]
+    fn request_preserves_configured_model_alias_and_optional_keys() {
+        let req = EnhancementRequest {
+            system_prompt: "system".into(),
+            user_message: "user".into(),
+            model: "team-model-alias".into(),
+            temperature: 0.2,
+            reasoning: ReasoningConfig::default(),
+            timeout: Duration::from_secs(1),
+            endpoint_override: None,
+        };
+
+        let request = build_request("https://example.test/chat", "key", &req).unwrap();
+        let body: Value = serde_json::from_slice(&request.body).unwrap();
+
+        assert_eq!(body["model"], "team-model-alias");
+        assert!(body.get("reasoning_effort").is_none());
     }
 }
