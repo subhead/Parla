@@ -286,17 +286,21 @@ mod tests {
 
     #[test]
     fn vad_plan_uses_boundary_and_preserves_timing() {
-        let boundary = 58 * 16_000;
+        let speech_start = 58 * 16_000;
+        let speech_end = 59 * 16_000;
+        let total = 90 * 16_000;
         let chunks = plan_parakeet_chunks(
-            90 * 16_000,
+            total,
             Some(&[
                 (10 * 16_000, 20 * 16_000),
                 (30 * 16_000, 40 * 16_000),
-                (boundary, 59 * 16_000),
+                (speech_start, speech_end),
             ]),
         );
-        assert_eq!(chunks[0].end, boundary);
-        assert_eq!(chunks[1].start, boundary);
+        assert_eq!(chunks[0].start, 0);
+        assert_eq!(chunks[0].end, speech_end);
+        assert_eq!(chunks[1].start, speech_end);
+        assert_eq!(chunks.last().unwrap().end, total);
         assert!(chunks.iter().all(|c| c.end > c.start));
         assert!(chunks
             .iter()
